@@ -1,0 +1,19 @@
+{
+    "name": "keboola/data-loader",
+    "description": "description_text",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Ondrej Popelka",
+            "email": "ondrej.popelka@keboola.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "~5.4.0"
+    },
+    "require": {
+        "keboola/storage-api-client": "~4.10.0",
+        "symfony/config": "~2.8.0"
+    }
+}
