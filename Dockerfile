@@ -1,5 +1,7 @@
 FROM php:7
 
+COPY . /tmp/
+
 WORKDIR /tmp/
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

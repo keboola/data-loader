@@ -41,7 +41,7 @@ $config = "
 
 $client = new \Keboola\StorageApi\Client(['token' => getenv('KBC_TOKEN')]);
 $reader = new \Keboola\DockerBundle\Docker\StorageApi\Reader($client);
-$configData = json_decode($config, true);
+$configData = json_decode(getenv('KBC_EXPORT_CONFIG'), true);
 
 $reader->downloadFiles($configData['storage']['input']['files'], './data');
 $reader->downloadTables($configData['storage']['input']['tables'], './data');
