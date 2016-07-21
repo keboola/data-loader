@@ -16,6 +16,6 @@ before_script:
   - docker -v
   - docker-compose -v
   - docker-compose build data-loader
-script: docker-compose run --rm php ./tests/run.sh
+script: docker-compose run --rm data-loader ./tests/run.sh
 after_success:
   - docker images
