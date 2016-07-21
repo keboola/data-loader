@@ -1,59 +1,43 @@
 <?php
 
 require "vendor/autoload.php";
-require "Adapter.php";
-require "ApplicationException.php";
-require "InvalidConfigurationException.php";
-require "Reader.php";
-require "UserException.php";
-require "Configuration.php";
-require "Input/File/Manifest.php";
-require "Input/File/Manifest/Adapter.php";
-require "Input/Table/Manifest.php";
-require "Input/Table/Manifest/Adapter.php";
-require "Input/File.php";
-require "Input/Table.php";
 
-openlog("myScriptLog", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+use Keboola\InputMapping\Exception\InvalidInputException;
+use Keboola\InputMapping\Reader\Reader;
+use Keboola\StorageApi\Client;
+use Monolog\Handler\SyslogHandler;
+use Monolog\Logger;
 
-syslog(LOG_WARNING, "Fantomas Comming!");
+$log = new Logger('name');
+$log->pushHandler(new SyslogHandler('data-loader'));
+$log->info("Starting Data Loader");
 
-$config = "
-{
-    \"storage\": {
-        \"input\": {
-            \"tables\": [
-                {
-                    \"source\": \"in.c-dg-main.profiles\",
-                    \"destination\": \"source.csv\",
-                    \"limit\": 50
-                },
-                {
-                    \"source\": \"in.c-main.anvil-history\",
-                    \"destination\": \"source1.csv\",
-                    \"columns\": [\"id\", \"mpg\", \"cylinders\", \"origin\"],
-                    \"where_column\": \"origin\",
-                    \"where_values\": [1, 3],
-                    \"where_operator\": \"eq\"
-                }
-            ],
-            \"files\": []
-        }
+try {
+    $config = getenv('KBC_EXPORT_CONFIG');
+    if (empty($config)) {
+        throw new InvalidInputException("Environment KBC_EXPORT_CONFIG is empty.");
     }
-}";
+    $configData = json_decode($config, true);
+    if (empty($configData) || (json_last_error() != JSON_ERROR_NONE)) {
+        throw new InvalidInputException("Input configuration is invalid: " . json_last_error_msg());
+    }
 
-$config = getenv('KBC_EXPORT_CONFIG');
-var_dump($config);
-$client = new \Keboola\StorageApi\Client(['token' => getenv('KBC_TOKEN')]);
-$reader = new \Keboola\DockerBundle\Docker\StorageApi\Reader($client);
-$configData = json_decode($config, true);
-echo json_last_error_msg();
-var_dump($configData);
+    $token = getenv('KBC_TOKEN');
+    if (empty($token)) {
+        throw new InvalidInputException("Environment KBC_TOKEN is empty.");
+    }
+    $dataDir = getenv('KBC_DATADIR');
+    if (empty($dataDir)) {
+        $dataDir = '/data/';
+    }
 
-$reader->downloadFiles($configData['storage']['input']['files'], '/data');
-$reader->downloadTables($configData['storage']['input']['tables'], '/data');
+    $client = new Client(['token' => $token]);
+    $reader = new Reader($client);
+    $reader->downloadFiles($configData['storage']['input']['files'], $dataDir);
+    $reader->downloadTables($configData['storage']['input']['tables'], $dataDir);
+} catch (InvalidInputException $e) {
+    $log->error($e->getMessage(), $e);
+} catch (\Exception $e) {
+    $log->critical($e->getMessage(), $e);
+}
 
-syslog(LOG_WARNING, "Fantomas Leaving!");
-closelog();
-
-//"{\"storage\":{\"input\":{\"tables\":[{\"source\":\"in.c-dg-main.profiles\",\"destination\":\"source.csv\",\"limit\":50},{\"source\":\"in.c-main.anvil-history\",\"destination\":\"source1.csv\",\"columns\":[\"id\",\"mpg\",\"cylinders\",\"origin\"],\"where_column\":\"origin\",\"where_values\":[1,3],\"where_operator\":\"eq\"}],\"files\":[]}}}"
