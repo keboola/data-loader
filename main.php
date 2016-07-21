@@ -37,6 +37,8 @@ try {
     $reader->downloadTables($configData['storage']['input']['tables'], $dataDir);
 } catch (InvalidInputException $e) {
     $log->error($e->getMessage(), ['exception' => $e]);
+    exit(1);
 } catch (\Exception $e) {
     $log->critical($e->getMessage(), ['exception' => $e]);
+    exit(2);
 }
