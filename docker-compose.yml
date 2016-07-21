@@ -1,6 +1,6 @@
 version: '2'
 services:
-  php:
+  data-loader:
     build: .
     image: keboola/data-loader
     tty: true
