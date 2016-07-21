@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Starting tests"
+echo "Starting tests" >&1
 php --version \
 	&& composer --version \
  	&& /code/vendor/bin/phpcs --standard=psr2 -n --ignore=vendor --extensions=php . \
@@ -13,9 +13,9 @@ php /code/Tests/sapi-client.phar delete-table --token=$KBC_TOKEN "in.c-main.sour
 
 if [ -f "$file" ]
 then
-	echo "$file found."
+	echo "$file found." >&1
 	exit 0
 else
-	echo "$file not found."
+	echo "$file not found." >&2
 	exit 1
 fi
