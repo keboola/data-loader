@@ -19,3 +19,9 @@ before_script:
 script: docker-compose run --rm --entrypoint sh -e KBC_TOKEN=$KBC_TOKEN data-loader /code/Tests/run.sh
 after_success:
   - docker images
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: ./deploy.sh
+  on:
+    tags: true  
