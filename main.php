@@ -5,12 +5,11 @@ require "vendor/autoload.php";
 use Keboola\InputMapping\Exception\InvalidInputException;
 use Keboola\InputMapping\Reader\Reader;
 use Keboola\StorageApi\Client;
-use Monolog\Handler\SyslogHandler;
+use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
 $log = new Logger('name');
-$log->pushHandler(new SyslogHandler('data-loader'));
-$log->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout'));
+$log->pushHandler(new StreamHandler('php://stdout'));
 $log->info("Starting Data Loader");
 
 try {
