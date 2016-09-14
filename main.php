@@ -10,6 +10,7 @@ use Monolog\Logger;
 
 $log = new Logger('name');
 $log->pushHandler(new SyslogHandler('data-loader'));
+$log->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout'));
 $log->info("Starting Data Loader");
 
 try {
