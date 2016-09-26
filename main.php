@@ -31,10 +31,18 @@ try {
         $dataDir = '/data/';
     }
 
+
     $client = new Client(['token' => $token]);
     $reader = new Reader($client);
-    $reader->downloadFiles($configData['storage']['input']['files'], $dataDir . '/in/tables/');
-    $reader->downloadTables($configData['storage']['input']['tables'], $dataDir . '/in/files/');
+    $fs = new \Symfony\Component\Filesystem\Filesystem();
+    $fs->mkdir($dataDir . '/in/tables/');
+    $fs->mkdir($dataDir . '/in/files/');
+    if (!empty($configData['storage']['input']['files'])) {
+        $reader->downloadFiles($configData['storage']['input']['files'], $dataDir . '/in/files/');
+    }
+    if (!empty($configData['storage']['input']['tables'])) {
+        $reader->downloadTables($configData['storage']['input']['tables'], $dataDir . '/in/tables/');
+    }
 } catch (InvalidInputException $e) {
     $log->error($e->getMessage(), ['exception' => $e]);
     exit(1);
