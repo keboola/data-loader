@@ -33,8 +33,8 @@ try {
 
     $client = new Client(['token' => $token]);
     $reader = new Reader($client);
-    $reader->downloadFiles($configData['storage']['input']['files'], $dataDir);
-    $reader->downloadTables($configData['storage']['input']['tables'], $dataDir);
+    $reader->downloadFiles($configData['storage']['input']['files'], $dataDir . '/in/tables/');
+    $reader->downloadTables($configData['storage']['input']['tables'], $dataDir . '/in/files/');
 } catch (InvalidInputException $e) {
     $log->error($e->getMessage(), ['exception' => $e]);
     exit(1);
