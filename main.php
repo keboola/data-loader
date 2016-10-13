@@ -30,9 +30,17 @@ try {
     if (empty($dataDir)) {
         $dataDir = '/data/';
     }
-
-
+    
     $client = new Client(['token' => $token]);
+
+    $runId = getenv('KBC_RUNID');
+    if (empty($runId)) {
+        $runId = $client->generateRunId();
+    } else {
+        $runId = $client->generateRunId($runId);
+    }
+    $client->setRunId($runId);
+
     $reader = new Reader($client);
     $fs = new \Symfony\Component\Filesystem\Filesystem();
     $fs->mkdir($dataDir . '/in/tables/');
@@ -44,9 +52,9 @@ try {
         $reader->downloadTables($configData['storage']['input']['tables'], $dataDir . '/in/tables/');
     }
 } catch (InvalidInputException $e) {
-    $log->error($e->getMessage(), ['exception' => $e]);
+    $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
     exit(1);
 } catch (\Exception $e) {
-    $log->critical($e->getMessage(), ['exception' => $e]);
+    $log->critical($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
     exit(2);
 }

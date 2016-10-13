@@ -10,5 +10,6 @@ The following environment variables are used for configuration:
     see [description](https://developers.keboola.com/extend/common-interface/config-file/).
 - KBC_TOKEN - Storage API token.
 - KBC_DATADIR - Optional target directory, defaults to `/data/`
+- KBC_RUNID - Optional RunID, that appends to the log
 
 Run the loader with `php main.php`.
