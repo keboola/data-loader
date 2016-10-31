@@ -15,6 +15,21 @@ $log->pushHandler(new StreamHandler('php://stdout'));
 $log->info("Starting Data Loader");
 
 try {
+    $token = getenv('KBC_TOKEN');
+    if (empty($token)) {
+        throw new InvalidInputException("Environment KBC_TOKEN is empty.");
+    }
+    $client = new Client(['token' => $token]);
+
+    $runId = getenv('KBC_RUNID');
+    if (empty($runId)) {
+        $runId = $client->generateRunId();
+    } else {
+        $runId = $client->generateRunId($runId);
+    }
+    $client->setRunId($runId);
+    $log->info("DataLoader is loading data", ['runId' => $runId]);
+
     $config = getenv('KBC_EXPORT_CONFIG');
     if (empty($config)) {
         throw new InvalidInputException("Environment KBC_EXPORT_CONFIG is empty.");
@@ -26,24 +41,10 @@ try {
     $processor = new Processor();
     $configData = $processor->processConfiguration(new ExportConfig(), ['configuration' => $configData]);
 
-    $token = getenv('KBC_TOKEN');
-    if (empty($token)) {
-        throw new InvalidInputException("Environment KBC_TOKEN is empty.");
-    }
     $dataDir = getenv('KBC_DATADIR');
     if (empty($dataDir)) {
         $dataDir = '/data/';
     }
-
-    $client = new Client(['token' => $token]);
-
-    $runId = getenv('KBC_RUNID');
-    if (empty($runId)) {
-        $runId = $client->generateRunId();
-    } else {
-        $runId = $client->generateRunId($runId);
-    }
-    $client->setRunId($runId);
 
     $reader = new Reader($client);
     $fs = new \Symfony\Component\Filesystem\Filesystem();
