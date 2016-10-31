@@ -45,6 +45,8 @@ try {
     $fs = new \Symfony\Component\Filesystem\Filesystem();
     $fs->mkdir($dataDir . '/in/tables/');
     $fs->mkdir($dataDir . '/in/files/');
+    $fs->mkdir($dataDir . '/out/tables/');
+    $fs->mkdir($dataDir . '/out/files/');
     if (!empty($configData['storage']['input']['files'])) {
         $reader->downloadFiles($configData['storage']['input']['files'], $dataDir . '/in/files/');
     }
