@@ -2,11 +2,13 @@
 
 require "vendor/autoload.php";
 
+use Keboola\DataLoader\ExportConfig;
 use Keboola\InputMapping\Exception\InvalidInputException;
 use Keboola\InputMapping\Reader\Reader;
 use Keboola\StorageApi\Client;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Symfony\Component\Config\Definition\Processor;
 
 $log = new Logger('name');
 $log->pushHandler(new StreamHandler('php://stdout'));
@@ -21,6 +23,8 @@ try {
     if (empty($configData) || (json_last_error() != JSON_ERROR_NONE)) {
         throw new InvalidInputException("Input configuration is invalid: " . json_last_error_msg());
     }
+    $processor = new Processor();
+    $configData = $processor->processConfiguration(new ExportConfig(), ['configuration' => $configData]);
 
     $token = getenv('KBC_TOKEN');
     if (empty($token)) {
@@ -30,7 +34,7 @@ try {
     if (empty($dataDir)) {
         $dataDir = '/data/';
     }
-    
+
     $client = new Client(['token' => $token]);
 
     $runId = getenv('KBC_RUNID');
@@ -45,11 +49,17 @@ try {
     $fs = new \Symfony\Component\Filesystem\Filesystem();
     $fs->mkdir($dataDir . '/in/tables/');
     $fs->mkdir($dataDir . '/in/files/');
+    $fs->mkdir($dataDir . '/out/tables/');
+    $fs->mkdir($dataDir . '/out/files/');
     if (!empty($configData['storage']['input']['files'])) {
         $reader->downloadFiles($configData['storage']['input']['files'], $dataDir . '/in/files/');
+    } else {
+        $log->info("Input files empty.", ['runId' => $runId]);
     }
     if (!empty($configData['storage']['input']['tables'])) {
         $reader->downloadTables($configData['storage']['input']['tables'], $dataDir . '/in/tables/');
+    } else {
+        $log->info("Input tables empty.", ['runId' => $runId]);
     }
 } catch (InvalidInputException $e) {
     $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);

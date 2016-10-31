@@ -18,5 +18,10 @@
         "symfony/config": "^2.8.0",
         "keboola/input-mapping": "^1.0",
         "monolog/monolog": "^1.20"
+    },
+    "autoload": {
+        "psr-0": {
+            "Keboola\\DataLoader": ""
+        }
     }
 }
