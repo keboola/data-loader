@@ -16,4 +16,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY . /tmp/
 
 RUN composer install --no-interaction
-ENTRYPOINT php main.php
+ENTRYPOINT php main.php && /bin/bash
