@@ -1,5 +1,8 @@
 FROM php:7
 
+ENV DEBIAN_FRONTEND noninteractive
+ENV COMPOSER_ALLOW_SUPERUSER 1
+
 WORKDIR /tmp/
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

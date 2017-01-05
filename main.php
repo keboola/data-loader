@@ -67,5 +67,5 @@ try {
     exit(1);
 } catch (\Exception $e) {
     $log->critical($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
-    exit(2);
+    exit(1);
 }
