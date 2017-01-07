@@ -1,5 +1,5 @@
 #/bin/bash
 set -e
 
-php /code/main.php
+php /appcode/main.php
 apache2-foreground

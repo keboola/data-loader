@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& curl -sS --fail https://getcomposer.org/installer | php \
 	&& mv /tmp/composer.phar /usr/local/bin/composer 
 
-COPY . /code/
-WORKDIR /code/
+COPY . /appcode/
+WORKDIR /appcode/
 RUN composer install --no-interaction
-CMD ["/code/run.sh"]
+CMD ["/appcode/run.sh"]
