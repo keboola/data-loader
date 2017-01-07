@@ -1,4 +1,4 @@
-FROM php:7
+FROM php:7-apache
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& curl -sS --fail https://getcomposer.org/installer | php \
 	&& mv /tmp/composer.phar /usr/local/bin/composer 
 
-COPY . /tmp/
-
+COPY . /code/
+WORKDIR /code/
 RUN composer install --no-interaction
-ENTRYPOINT php main.php && /bin/bash
+CMD ["/code/run.sh"]
