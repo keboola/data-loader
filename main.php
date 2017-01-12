@@ -10,7 +10,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Symfony\Component\Config\Definition\Processor;
 
-$log = new Logger('name');
+$log = new Logger('app-logger');
 $log->pushHandler(new StreamHandler('php://stdout'));
 $log->info("Starting Data Loader");
 
@@ -28,6 +28,8 @@ try {
         $runId = $client->generateRunId($runId);
     }
     $client->setRunId($runId);
+    $handler = new \Keboola\DataLoader\StorageApiHandler('data-loader', $client);
+    $log->pushHandler($handler);
     $log->info("DataLoader is loading data", ['runId' => $runId]);
 
     $config = getenv('KBC_EXPORT_CONFIG');
@@ -46,7 +48,7 @@ try {
         $dataDir = '/data/';
     }
 
-    $reader = new Reader($client);
+    $reader = new Reader($client, $log);
     $fs = new \Symfony\Component\Filesystem\Filesystem();
     $fs->mkdir($dataDir . '/in/tables/');
     $fs->mkdir($dataDir . '/in/files/');
