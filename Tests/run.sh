@@ -1,8 +1,10 @@
 #!/bin/bash
+set -e
+
 echo "Starting tests" >&1
 php --version \
 	&& composer --version \
- 	&& /code/vendor/bin/phpcs --standard=psr2 -n --ignore=vendor --extensions=php . \
+ 	&& /code/vendor/bin/phpcs --standard=psr2 -n --ignore=vendor --extensions=php /code/
 
 export KBC_EXPORT_CONFIG="{\"storage\":{\"input\":{\"tables\":[{\"source\":\"in.c-main.source\",\"destination\":\"destination.csv\"}]}}}"
 file="/data/in/tables/destination.csv"

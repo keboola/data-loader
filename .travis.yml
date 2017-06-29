@@ -4,7 +4,7 @@ services:
   - docker
 before_script:
   - docker-compose build data-loader
-script: docker-compose run --rm --entrypoint sh -e KBC_TOKEN=$KBC_TOKEN data-loader /code/Tests/run.sh
+script: docker-compose run --rm -e KBC_TOKEN=$KBC_TOKEN data-loader /code/Tests/run.sh
 after_success:
   - docker images
 deploy:
