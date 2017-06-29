@@ -19,7 +19,11 @@ try {
     if (empty($token)) {
         throw new InvalidInputException("Environment KBC_TOKEN is empty.");
     }
-    $client = new Client(['token' => $token]);
+    $options = ['token' => $token];
+    if (getenv('KBC_STORAGEAPI_URL')) {
+        $options['url'] = getenv('KBC_STORAGEAPI_URL');
+    }
+    $client = new Client($options);
 
     $runId = getenv('KBC_RUNID');
     if (empty($runId)) {
