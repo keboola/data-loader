@@ -4,6 +4,7 @@ require "vendor/autoload.php";
 
 use Keboola\DataLoader\ExportConfig;
 use Keboola\InputMapping\Exception\InvalidInputException;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Keboola\InputMapping\Reader\Reader;
 use Keboola\StorageApi\Client;
 use Monolog\Handler\StreamHandler;
@@ -69,6 +70,9 @@ try {
         $log->info("Input tables empty.", ['runId' => $runId]);
     }
 } catch (InvalidInputException $e) {
+    $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
+    exit(1);
+} catch (InvalidConfigurationException $e) {
     $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
     exit(1);
 } catch (\Exception $e) {
