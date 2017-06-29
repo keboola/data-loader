@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 echo "Starting tests" >&1
 php --version \
 	&& composer --version \
