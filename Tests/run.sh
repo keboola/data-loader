@@ -9,9 +9,11 @@ php --version \
 export KBC_EXPORT_CONFIG="{\"storage\":{\"input\":{\"tables\":[{\"source\":\"in.c-main.source\",\"destination\":\"destination.csv\"}]}}}"
 file="/data/in/tables/destination.csv"
 
+php /code/Tests/sapi-client.phar purge-project --token=${KBC_TOKEN}
+php /code/Tests/sapi-client.phar create-bucket --token=${KBC_TOKEN} "in.c-main"
 php /code/Tests/sapi-client.phar create-table --token=${KBC_TOKEN} "in.c-main" "source" /code/Tests/source.csv
 php /code/main.php
-php /code/Tests/sapi-client.phar delete-table --token=${KBC_TOKEN} "in.c-main.source"
+php /code/Tests/sapi-client.phar delete-bucket --token=${KBC_TOKEN} "in.c-main" --recursive
 
 if [ -f "$file" ]
 then
