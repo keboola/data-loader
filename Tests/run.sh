@@ -9,6 +9,7 @@ php --version \
 export KBC_EXPORT_CONFIG="{\"storage\":{\"input\":{\"tables\":[{\"source\":\"in.c-main.source\",\"destination\":\"destination.csv\"}]}}}"
 file="/data/in/tables/destination.csv"
 
+curl -sS --fail https://s3.amazonaws.com/keboola-storage-api-cli/builds/sapi-client.phar --output /code/Tests/sapi-client.phar
 php /code/Tests/sapi-client.phar purge-project --token=${KBC_TOKEN}
 php /code/Tests/sapi-client.phar create-bucket --token=${KBC_TOKEN} "in.c-main"
 php /code/Tests/sapi-client.phar create-table --token=${KBC_TOKEN} "in.c-main" "source" /code/Tests/source.csv
