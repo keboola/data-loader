@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # taken from https://gist.github.com/BretFisher/14cd228f0d7e40dae085
 # install aws cli w/o sudo
