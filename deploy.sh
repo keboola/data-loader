@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
+docker tag keboola/data-loader quay.io/keboola/data-loader:${TRAVIS_TAG}
+docker tag keboola/data-loader quay.io/keboola/data-loader:latest
+docker images
+docker push quay.io/keboola/data-loader:${TRAVIS_TAG}
+docker push quay.io/keboola/data-loader:latest
+
 # taken from https://gist.github.com/BretFisher/14cd228f0d7e40dae085
 # install aws cli w/o sudo
 pip install --user awscli
