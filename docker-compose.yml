@@ -6,3 +6,5 @@ services:
     tty: true
     stdin_open: true
     command: bash
+    volumes:
+      - ./:/code/
