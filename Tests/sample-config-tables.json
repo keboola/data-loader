@@ -13,10 +13,10 @@
             "destination": "out.c-main.r-transpose",
             "source": "transpose.csv"
         }
-    ],
+    ],    
     "packages": [],
     "tags": [],
     "queries": [
-        "thi is some script\ncode on multiple lines"
+        "this is some script\ncode on multiple lines"
     ]
 }

@@ -2,8 +2,7 @@
 
 namespace Keboola\DataLoader;
 
-use Keboola\InputMapping\Configuration\File;
-use Keboola\InputMapping\Configuration\Table;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -19,10 +18,42 @@ class TransformationConfig implements ConfigurationInterface
             ->children()
                 ->scalarNode('backend')->isRequired()->end()
                 ->scalarNode('type')->isRequired()->end()
-                ->arrayNode('queries')->prototype('scalar')->isRequired()->end()->end()
+                ->arrayNode('queries')->prototype('scalar')->defaultValue([])->end()->end()
+                ->arrayNode('tags')->prototype('scalar')->defaultValue([])->end()->end()
                 ->arrayNode('input')
                 ->prototype('array');
-        Table::configureNode($definition);
+        self::configureTableNode($definition);
         return $treeBuilder;
+    }
+
+    public static function configureTableNode(NodeDefinition $node)
+    {
+        $node
+            ->children()
+                ->scalarNode("source")->isRequired()->end()
+                ->scalarNode("destination")->end()
+                ->integerNode("days")->treatNullLike(0)->end()
+                ->arrayNode("columns")->prototype("scalar")->end()->end()
+                ->integerNode("limit")->end()
+                ->scalarNode("where_column")->end()
+                ->arrayNode("where_values")->prototype("scalar")->end()->end()
+                ->scalarNode("where_operator")
+                    ->defaultValue("eq")
+                    ->validate()
+                        ->ifNotInArray(["eq", "ne"])
+                        ->thenInvalid("Invalid operator in where_operator %s.")
+                    ->end()
+                ->end()
+                ->scalarNode("whereColumn")->end()
+                ->arrayNode("whereValues")->prototype("scalar")->end()->end()
+                ->scalarNode("whereOperator")
+                    ->defaultValue("eq")
+                    ->validate()
+                        ->ifNotInArray(["eq", "ne"])
+                        ->thenInvalid("Invalid operator in where_operator %s.")
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 }
