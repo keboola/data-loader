@@ -1,0 +1,22 @@
+{
+    "backend": "docker",
+    "description": "Test configuration",
+    "type": "r",
+    "input": [
+        {
+            "source": "in.c-main.source",
+            "destination": "destination.csv"
+        }
+    ],
+    "output": [
+        {
+            "destination": "out.c-main.r-transpose",
+            "source": "transpose.csv"
+        }
+    ],
+    "packages": [],
+    "tags": [],
+    "queries": [
+        "thi is some script\ncode on multiple lines"
+    ]
+}
