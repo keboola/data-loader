@@ -91,17 +91,15 @@ class ConfigValidator
         }
         $component = new Components($this->client);
         $configData = $component->getConfigurationRowVersion('transformation', $configId, $rowId, $versionId);
-        $configData = json_decode($configData, true);
-        if (empty($configData) || (json_last_error() != JSON_ERROR_NONE)) {
-            throw new InvalidInputException("Input configuration is invalid: " . json_last_error_msg());
-        }
         $processor = new Processor();
-        $configData = $processor->processConfiguration(new ExportConfig(), ['configuration' => $configData]);
-        if ($configData['backend'] != 'docker') {
-            throw new InvalidInputException("Invalid transformation configuration backend: " . $configData['backend']);
+        $configData = $processor->processConfiguration(new TransformationConfig(), ['configuration' => $configData]);
+        if ($configData['configuration']['backend'] != 'docker') {
+            throw new InvalidInputException(
+                "Invalid transformation configuration backend: " . $configData['configuration']['backend']
+            );
         }
         $this->type = $configData['configuration']['type'];
-        $this->input = $configData['configuration']['input'];
+        $this->input['tables'] = $configData['configuration']['input'];
         $this->script = implode("\n", $configData['configuration']['queries']);
     }
 

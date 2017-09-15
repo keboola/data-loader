@@ -12,18 +12,17 @@ class TransformationConfig implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $root = $treeBuilder->root('configuration');
+        $root = $treeBuilder->root('configuration')->ignoreExtraKeys(true);
         $definition = $root->children()
             ->arrayNode('configuration')
-            ->children()
-            ->scalarNode('backend')->isRequired()->end()
-            ->scalarNode('type')->isRequired()->end()
-            ->arrayNode('queries')->prototype('scalar')->isRequired()->end()
-            ->arrayNode('input')
             ->ignoreExtraKeys(true)
-            ->children();
-        File::configureNode($definition->arrayNode('files')->prototype('array'));
-        Table::configureNode($definition->arrayNode('tables')->prototype('array'));
+            ->children()
+                ->scalarNode('backend')->isRequired()->end()
+                ->scalarNode('type')->isRequired()->end()
+                ->arrayNode('queries')->prototype('scalar')->isRequired()->end()->end()
+                ->arrayNode('input')
+                ->prototype('array');
+        Table::configureNode($definition);
         return $treeBuilder;
     }
 }
