@@ -6,7 +6,7 @@ php --version \
 	&& composer --version \
  	&& /code/vendor/bin/phpcs --standard=psr2 -n --ignore=vendor --extensions=php /code/
 
-#curl -sS --fail https://s3.amazonaws.com/keboola-storage-api-cli/builds/sapi-client.phar --output /code/Tests/sapi-client.phar
+curl -sS --fail https://s3.amazonaws.com/keboola-storage-api-cli/builds/sapi-client.phar --output /code/Tests/sapi-client.phar
 # Create bucket and table
 php /code/Tests/sapi-client.phar purge-project --token=${KBC_TOKEN}
 php /code/Tests/sapi-client.phar create-bucket --token=${KBC_TOKEN} "in" "main"
