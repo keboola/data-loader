@@ -100,6 +100,14 @@ class ConfigValidator
         }
         $this->type = $configData['configuration']['type'];
         $this->input['tables'] = $configData['configuration']['input'];
+        foreach ($this->input['tables'] as &$table) {
+            $table['where_values'] = $table['where_values'] ?? $table['whereValues'] ?? null;
+            $table['where_column'] = $table['where_column'] ?? $table['whereColumn'] ?? null;
+            $table['where_operator'] = $table['where_operator'] ?? $table['whereOperator'] ?? null;
+        }
+        if (!empty($configData['configuration']['tags'])) {
+            $this->input['files'][]['tags'] = $configData['configuration']['tags'];
+        }
         $this->script = implode("\n", $configData['configuration']['queries']);
     }
 

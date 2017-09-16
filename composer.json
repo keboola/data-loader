@@ -18,7 +18,8 @@
         "symfony/config": "^2.8",
         "keboola/input-mapping": "^2.0",
         "monolog/monolog": "^1.22",
-        "keboola/php-utils": "^1.0"
+        "keboola/php-utils": "^1.0",
+        "php": ">=7.0"
     },
     "autoload": {
         "psr-0": {
