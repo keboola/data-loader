@@ -117,8 +117,8 @@ class ConfigValidator
             $table['where_operator'] = $table['where_operator'] ?? $table['whereOperator'] ?? null;
         }
         if (!empty($configData['configuration']['tags'])) {
-            $this->input['files'][]['tags'] = $configData['configuration']['tags'];
-            $this->logger->info("Loading files with tags " . var_export($this->input['files'][]['tags'], true));
+            $this->input['files'][0]['tags'] = $configData['configuration']['tags'];
+            $this->logger->info("Loading files with tags " . var_export($this->input['files'][0]['tags'], true));
         }
         $this->script = implode("\n", $configData['configuration']['queries']);
         $this->logger->info("Script size " . strlen($this->script));
