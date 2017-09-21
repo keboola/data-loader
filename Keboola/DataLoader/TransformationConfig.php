@@ -28,6 +28,8 @@ class TransformationConfig implements ConfigurationInterface
 
     public static function configureTableNode(NodeDefinition $node)
     {
+        /* accept relevant stuff from https://github.com/keboola/transformation-bundle/blob/master/Resources/schemas/docker.json
+        and \Keboola\InputMapping\Configuration::configurenode() */
         $node
             ->children()
                 ->scalarNode("source")->isRequired()->end()

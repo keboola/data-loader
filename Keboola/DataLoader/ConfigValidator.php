@@ -34,7 +34,16 @@ class ConfigValidator
      * @var string
      */
     private $script;
+
+    /**
+     * @var string
+     */
     private $type;
+
+    /**
+     * @var Logger
+     */
+    private $logger;
 
     private function validateClient()
     {
@@ -68,6 +77,7 @@ class ConfigValidator
 
     private function validateExportConfig()
     {
+        $this->logger->info("Loading configuration from EXPORT_CONFIG");
         $config = getenv('KBC_EXPORT_CONFIG');
         if (empty($config)) {
             throw new InvalidInputException("Environment KBC_EXPORT_CONFIG is empty.");
@@ -86,6 +96,7 @@ class ConfigValidator
         $configId = getenv('KBC_CONFIG_ID');
         $rowId = getenv('KBC_ROW_ID');
         $versionId = getenv('KBC_ROW_VERSION');
+        $this->logger->info("Reading configuration " . $configId . " , row: " . $rowId);
         if (empty($configId) || empty($rowId) || empty($versionId)) {
             throw new InvalidInputException("Environment KBC_CONFIG_ID or KBC_ROW_ID or KBC_ROW_VERSION is empty.");
         }
@@ -107,8 +118,10 @@ class ConfigValidator
         }
         if (!empty($configData['configuration']['tags'])) {
             $this->input['files'][]['tags'] = $configData['configuration']['tags'];
+            $this->logger->info("Loading files with tags " . var_export($this->input['files'][]['tags'], true));
         }
         $this->script = implode("\n", $configData['configuration']['queries']);
+        $this->logger->info("Script size " . strlen($this->script));
     }
 
     public function validate(Logger $logger)
@@ -118,6 +131,7 @@ class ConfigValidator
         $handler = new StorageApiHandler('data-loader', $this->client);
         $logger->pushHandler($handler);
         $logger->info("DataLoader is loading data", ['runId' => $this->runId]);
+        $this->logger = $logger;
         $this->validateDataDir();
         if (empty(getenv('KBC_CONFIG_ID'))) { // for fwd compat
             $this->validateExportConfig();
