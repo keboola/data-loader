@@ -24,7 +24,7 @@ try {
     $fs->mkdir($validator->getDataDir() . '/out/tables/');
     $fs->mkdir($validator->getDataDir() . '/out/files/');
     if ($validator->getScript()) {
-        file_put_contents('main.' . $validator->getExtension(), $validator->getScript());
+        file_put_contents($validator->getDataDir() . 'main.' . $validator->getExtension(), $validator->getScript());
     } else {
         $log->info("Script is empty.", ['runId' => $runId]);
     }
