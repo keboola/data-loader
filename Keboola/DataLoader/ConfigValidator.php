@@ -96,7 +96,11 @@ class ConfigValidator
             throw new InvalidInputException("Input configuration is invalid: " . json_last_error_msg());
         }
         $processor = new Processor();
-        $configData = $processor->processConfiguration(new ExportConfig(), ['configuration' => $configData]);
+        try {
+            $configData = $processor->processConfiguration(new ExportConfig(), ['configuration' => $configData]);
+        } catch (InvalidConfigurationException $e) {
+            throw new InvalidInputException("Configuration is invalid " . $e->getMessage(), self::CONFIGURATION_INVALID);
+        }
         $this->input = $configData['storage']['input'];
     }
 

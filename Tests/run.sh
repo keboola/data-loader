@@ -27,7 +27,7 @@ fi
 export KBC_EXPORT_CONFIG="{\"storage\":{\"input\":{\"tables\":[{\"invalid\":\"configuration\"}]}}}"
 set +e
 php /code/main.php
-if [ "$?" -eq 1 ]; then
+if [ "$?" -eq 171 ]; then
 	echo "Exit code correct" >&1
 else
 	echo "Exit code incorrect" >&2
