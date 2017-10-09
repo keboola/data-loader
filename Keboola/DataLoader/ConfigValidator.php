@@ -4,12 +4,21 @@ namespace Keboola\DataLoader;
 
 use Keboola\InputMapping\Exception\InvalidInputException;
 use Keboola\StorageApi\Client;
+use Keboola\StorageApi\ClientException;
 use Keboola\StorageApi\Components;
 use Monolog\Logger;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigValidator
 {
+    const INTERNAL_ERROR = 170;
+    const CONFIGURATION_INVALID = 171;
+    const FILES_ERROR = 172;
+    const TABLES_ERROR = 173;
+    const INTERNAL_II_ERROR = 174;
+    const INTERNAL_CLIENT_ERROR = 175;
+
     /**
      * @var Client
      */
@@ -49,7 +58,7 @@ class ConfigValidator
     {
         $token = getenv('KBC_TOKEN');
         if (empty($token)) {
-            throw new InvalidInputException("Environment KBC_TOKEN is empty.");
+            throw new InvalidInputException("Environment KBC_TOKEN is empty.", self::INTERNAL_ERROR);
         }
         $options = ['token' => $token];
         if (getenv('KBC_STORAGEAPI_URL')) {
@@ -80,7 +89,7 @@ class ConfigValidator
         $this->logger->info("Loading configuration from EXPORT_CONFIG");
         $config = getenv('KBC_EXPORT_CONFIG');
         if (empty($config)) {
-            throw new InvalidInputException("Environment KBC_EXPORT_CONFIG is empty.");
+            throw new InvalidInputException("Environment KBC_EXPORT_CONFIG is empty.", self::INTERNAL_ERROR);
         }
         $configData = json_decode($config, true);
         if (empty($configData) || (json_last_error() != JSON_ERROR_NONE)) {
@@ -98,26 +107,32 @@ class ConfigValidator
         $rowId = getenv('KBC_ROW_ID');
         $this->logger->info("Reading configuration " . $configId . " , row: " . $rowId);
         if (empty($configId) || empty($rowId) || empty($versionId)) {
-            throw new InvalidInputException("Environment KBC_CONFIG_ID or KBC_ROW_ID or KBC_CONFIG_VERSION is empty.");
+            throw new InvalidInputException(
+                "Environment KBC_CONFIG_ID or KBC_ROW_ID or KBC_CONFIG_VERSION is empty.",
+                self::INTERNAL_ERROR
+            );
         }
         $component = new Components($this->client);
-        $configData = $component->getConfigurationVersion('transformation', $configId, $versionId);
-        $configData['rows'] = $configData['rows'] ?? [];
-        foreach ($configData['rows'] as $row) {
-            if ($row['id'] == $rowId) {
-                $rowData = $row;
-                break;
+        try {
+            $configData = $component->getConfigurationVersion('transformation', $configId, $versionId);
+            $configData['rows'] = $configData['rows'] ?? [];
+            foreach ($configData['rows'] as $row) {
+                if ($row['id'] == $rowId) {
+                    $rowData = $row;
+                    break;
+                }
             }
+        } catch (ClientException $e) {
+            throw new InvalidInputException("Failed to get configuration " . $e->getMessage(), self::CONFIGURATION_INVALID);
         }
         if (empty($rowData)) {
-            throw new InvalidInputException("Configuration Row not found");
+            throw new InvalidInputException("Configuration Row not found", self::CONFIGURATION_INVALID);
         }
         $processor = new Processor();
-        $rowData = $processor->processConfiguration(new TransformationConfig(), ['configuration' => $rowData]);
-        if ($rowData['configuration']['backend'] != 'docker') {
-            throw new InvalidInputException(
-                "Invalid transformation configuration backend: " . $rowData['configuration']['backend']
-            );
+        try {
+            $rowData = $processor->processConfiguration(new TransformationConfig(), ['configuration' => $rowData]);
+        } catch (InvalidConfigurationException $e) {
+            throw new InvalidInputException("Configuration is invalid " . $e->getMessage(), self::CONFIGURATION_INVALID);
         }
         $this->type = $rowData['configuration']['type'];
         $this->input['tables'] = $rowData['configuration']['input'];
@@ -202,7 +217,7 @@ class ConfigValidator
             case 'python':
                 return 'py';
             default:
-                throw new InvalidInputException('Invalid transformation type ' . $this->type);
+                throw new InvalidInputException('Invalid transformation type ' . $this->type, self::CONFIGURATION_INVALID);
         }
     }
 }

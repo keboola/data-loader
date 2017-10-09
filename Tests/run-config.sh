@@ -83,14 +83,13 @@ export KBC_CONFIG_VERSION=1
 
 set +e
 php /code/main.php
-if [ "$?" -eq 1 ]; then
+if [ "$?" -eq 171 ]; then
 	printf "\nExit code correct\n\n" >&1
 else
 	printf "\nExit code incorrect\n\n" >&2
 	exit 1
 fi
 set -e
-
 
 # Check for invalid configuration
 
@@ -115,7 +114,7 @@ export KBC_ROW_ID=$(echo ${COMMAND_RESULT} | grep -o 'Row [0-9]* added' | grep -
 printf "Configuration row: ${KBC_ROW_ID}"
 set +e
 php /code/main.php
-if [ "$?" -eq 1 ]; then
+if [ "$?" -eq 171 ]; then
 	printf "\nExit code correct\n\n" >&1
 else
 	printf "\nExit code incorrect\n\n" >&2

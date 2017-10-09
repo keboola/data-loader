@@ -3,7 +3,6 @@
 require "vendor/autoload.php";
 
 use Keboola\InputMapping\Exception\InvalidInputException;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Keboola\InputMapping\Reader\Reader;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -29,24 +28,33 @@ try {
         $log->info("Script is empty.", ['runId' => $runId]);
     }
     if (!empty($validator->getInput()['files'])) {
-        $reader->downloadFiles($validator->getInput()['files'], $validator->getDataDir() . '/in/files/');
+        try {
+            $reader->downloadFiles($validator->getInput()['files'], $validator->getDataDir() . '/in/files/');
+        } catch (InvalidInputException $e) {
+            throw new InvalidInputException($e->getMessage(), \Keboola\DataLoader\ConfigValidator::FILES_ERROR, $e);
+        }
     } else {
         $log->info("Input files empty.", ['runId' => $runId]);
     }
     if (!empty($validator->getInput()['tables'])) {
-        $reader->downloadTables($validator->getInput()['tables'], $validator->getDataDir() . '/in/tables/');
+        try {
+            $reader->downloadTables($validator->getInput()['tables'], $validator->getDataDir() . '/in/tables/');
+        } catch (InvalidInputException $e) {
+            throw new InvalidInputException($e, \Keboola\DataLoader\ConfigValidator::TABLES_ERROR, $e);
+        }
     } else {
         $log->info("Input tables empty.", ['runId' => $runId]);
     }
 } catch (InvalidInputException $e) {
     $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
-    exit(1);
-} catch (InvalidConfigurationException $e) {
-    $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
-    exit(1);
+    if ($e->getCode()) {
+        exit($e->getCode());
+    } else {
+        exit(\Keboola\DataLoader\ConfigValidator::INTERNAL_II_ERROR);
+    }
 } catch (\Keboola\StorageApi\Exception $e) {
     $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
-    exit(1);
+    exit(\Keboola\DataLoader\ConfigValidator::INTERNAL_CLIENT_ERROR);
 } catch (\Exception $e) {
     $log->critical($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
     exit(2);
