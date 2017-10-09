@@ -94,33 +94,43 @@ class ConfigValidator
     private function validateConfig()
     {
         $configId = getenv('KBC_CONFIG_ID');
+        $versionId = getenv('KBC_CONFIG_VERSION');
         $rowId = getenv('KBC_ROW_ID');
-        $versionId = getenv('KBC_ROW_VERSION');
         $this->logger->info("Reading configuration " . $configId . " , row: " . $rowId);
         if (empty($configId) || empty($rowId) || empty($versionId)) {
-            throw new InvalidInputException("Environment KBC_CONFIG_ID or KBC_ROW_ID or KBC_ROW_VERSION is empty.");
+            throw new InvalidInputException("Environment KBC_CONFIG_ID or KBC_ROW_ID or KBC_CONFIG_VERSION is empty.");
         }
         $component = new Components($this->client);
-        $configData = $component->getConfigurationRowVersion('transformation', $configId, $rowId, $versionId);
+        $configData = $component->getConfigurationVersion('transformation', $configId, $versionId);
+        $configData['rows'] = $configData['rows'] ?? [];
+        foreach ($configData['rows'] as $row) {
+            if ($row['id'] == $rowId) {
+                $rowData = $row;
+                break;
+            }
+        }
+        if (empty($rowData)) {
+            throw new InvalidInputException("Configuration Row not found");
+        }
         $processor = new Processor();
-        $configData = $processor->processConfiguration(new TransformationConfig(), ['configuration' => $configData]);
-        if ($configData['configuration']['backend'] != 'docker') {
+        $rowData = $processor->processConfiguration(new TransformationConfig(), ['configuration' => $rowData]);
+        if ($rowData['configuration']['backend'] != 'docker') {
             throw new InvalidInputException(
-                "Invalid transformation configuration backend: " . $configData['configuration']['backend']
+                "Invalid transformation configuration backend: " . $rowData['configuration']['backend']
             );
         }
-        $this->type = $configData['configuration']['type'];
-        $this->input['tables'] = $configData['configuration']['input'];
+        $this->type = $rowData['configuration']['type'];
+        $this->input['tables'] = $rowData['configuration']['input'];
         foreach ($this->input['tables'] as &$table) {
             $table['where_values'] = $table['where_values'] ?? $table['whereValues'] ?? null;
             $table['where_column'] = $table['where_column'] ?? $table['whereColumn'] ?? null;
             $table['where_operator'] = $table['where_operator'] ?? $table['whereOperator'] ?? null;
         }
-        if (!empty($configData['configuration']['tags'])) {
-            $this->input['files'][0]['tags'] = $configData['configuration']['tags'];
+        if (!empty($rowData['configuration']['tags'])) {
+            $this->input['files'][0]['tags'] = $rowData['configuration']['tags'];
             $this->logger->info("Loading files with tags " . var_export($this->input['files'][0]['tags'], true));
         }
-        $this->script = implode("\n", $configData['configuration']['queries']);
+        $this->script = implode("\n", $rowData['configuration']['queries']);
         $this->logger->info("Script size " . strlen($this->script));
     }
 

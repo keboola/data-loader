@@ -8,22 +8,23 @@ php --version \
 
 curl -sS --fail https://s3.amazonaws.com/keboola-storage-api-cli/builds/sapi-client.phar --output /code/Tests/sapi-client.phar
 # Create bucket and table
-php /code/Tests/sapi-client.phar purge-project --token=${KBC_TOKEN}
-php /code/Tests/sapi-client.phar create-bucket --token=${KBC_TOKEN} "in" "main"
-php /code/Tests/sapi-client.phar create-table --token=${KBC_TOKEN} "in.c-main" "source" /code/Tests/source.csv
+#php /code/Tests/sapi-client.phar purge-project --token=${KBC_TOKEN}
+#php /code/Tests/sapi-client.phar create-bucket --token=${KBC_TOKEN} "in" "main"
+#php /code/Tests/sapi-client.phar create-table --token=${KBC_TOKEN} "in.c-main" "source" /code/Tests/source.csv
 
 # Create configuration
-export KBC_CONFIG_ID="test-config-1"
-export KBC_ROW_VERSION=1
-curl -sS --fail -X POST \
+export KBC_CONFIG_VERSION=2
+COMMAND_RESULT=$(curl -sS --fail -X POST \
   {$KBC_STORAGEAPI_URL}/v2/storage/components/transformation/configs \
   -H "content-type: application/x-www-form-urlencoded" \
   -H "x-storageapi-token: ${KBC_TOKEN}" \
-  -d "name=test&configurationId=test-config-1"
-printf "\nCreating configuration row" >&1
+  -d "name=test")
+export KBC_CONFIG_ID=$(echo ${COMMAND_RESULT} | grep -o '"id":"[0-9]*"' | grep -o '[0-9]*')
+printf "Configuration ID: ${KBC_CONFIG_ID}\n"
+printf "Creating configuration row\n" >&1
 CONFIG_DATA=$(cat /code/Tests/sample-config-tables.json)
 COMMAND_RESULT=$(curl -sS --fail -X POST \
-  {$KBC_STORAGEAPI_URL}/v2/storage/components/transformation/configs/test-config-1/rows \
+  {$KBC_STORAGEAPI_URL}/v2/storage/components/transformation/configs/${KBC_CONFIG_ID}/rows \
   -H "content-type: application/x-www-form-urlencoded" \
   -H "x-storageapi-token: ${KBC_TOKEN}" \
   -d "configuration=${CONFIG_DATA}")
@@ -37,24 +38,25 @@ file="/data/in/tables/destination.csv"
 
 if [ -f "$file" ]
 then
-	printf "\nFile $file found.\n" >&1
+	printf "\nFile $file found.\n\n" >&1
 else
-	printf "\nFile $file not found.\n" >&2
+	printf "\nFile $file not found.\n\n" >&2
 	exit 1
 fi
 
 # Create configuration
-export KBC_CONFIG_ID="test-config-2"
-export KBC_ROW_VERSION=1
-curl -sS --fail -X POST \
+export KBC_CONFIG_VERSION=2
+COMMAND_RESULT=$(curl -sS --fail -X POST \
   {$KBC_STORAGEAPI_URL}/v2/storage/components/transformation/configs \
   -H "content-type: application/x-www-form-urlencoded" \
   -H "x-storageapi-token: ${KBC_TOKEN}" \
-  -d "name=test&configurationId=test-config-2"
-printf "\nCreating configuration row" >&1
+  -d "name=test")
+export KBC_CONFIG_ID=$(echo ${COMMAND_RESULT} | grep -o '"id":"[0-9]*"' | grep -o '[0-9]*')
+printf "Configuration ID: ${KBC_CONFIG_ID}\n"
+printf "Creating configuration row\n" >&1
 CONFIG_DATA=$(cat /code/Tests/sample-config-files.json)
 COMMAND_RESULT=$(curl -sS --fail -X POST \
-  {$KBC_STORAGEAPI_URL}/v2/storage/components/transformation/configs/test-config-2/rows \
+  {$KBC_STORAGEAPI_URL}/v2/storage/components/transformation/configs/${KBC_CONFIG_ID}/rows \
   -H "content-type: application/x-www-form-urlencoded" \
   -H "x-storageapi-token: ${KBC_TOKEN}" \
   -d "configuration=${CONFIG_DATA}")
@@ -67,9 +69,9 @@ php /code/main.php
 fileCount=$(ls /data/in/files | grep -c 'in.c-main.source.csv')
 
 if [ "$fileCount" -eq 3 ]; then
-  printf "\n3 Files found.\n" >&1
+  printf "\n3 Files found.\n\n" >&1
 else
-  printf "\n3 Files not found (found '$fileCount').\n" >&2
+  printf "\n3 Files not found (found '$fileCount').\n\n" >&2
   exit 1
 fi
 
@@ -77,14 +79,14 @@ fi
 # Check for non-existent configuration
 export KBC_CONFIG_ID="non-existent-config"
 export KBC_ROW_ID=1
-export KBC_ROW_VERSION=1
+export KBC_CONFIG_VERSION=1
 
 set +e
 php /code/main.php
 if [ "$?" -eq 1 ]; then
-	printf "\nExit code correct\n" >&1
+	printf "\nExit code correct\n\n" >&1
 else
-	printf "\nExit code incorrect\n" >&2
+	printf "\nExit code incorrect\n\n" >&2
 	exit 1
 fi
 set -e
@@ -94,16 +96,18 @@ set -e
 
 # Create configuration
 export KBC_CONFIG_ID="test-config-3"
-export KBC_ROW_VERSION=1
-curl -sS --fail -X POST \
+export KBC_CONFIG_VERSION=2
+COMMAND_RESULT=$(curl -sS --fail -X POST \
   {$KBC_STORAGEAPI_URL}/v2/storage/components/transformation/configs \
   -H "content-type: application/x-www-form-urlencoded" \
   -H "x-storageapi-token: ${KBC_TOKEN}" \
-  -d "name=test&configurationId=test-config-3"
-printf "\nCreating configuration row"
+  -d "name=test")
+export KBC_CONFIG_ID=$(echo ${COMMAND_RESULT} | grep -o '"id":"[0-9]*"' | grep -o '[0-9]*')
+printf "Configuration ID: ${KBC_CONFIG_ID}\n"
+printf "Creating configuration row\n" >&1
 CONFIG_DATA=$(cat /code/Tests/sample-config-tables.json)
 COMMAND_RESULT=$(curl -sS --fail -X POST \
-  {$KBC_STORAGEAPI_URL}/v2/storage/components/transformation/configs/test-config-3/rows \
+  {$KBC_STORAGEAPI_URL}/v2/storage/components/transformation/configs/${KBC_CONFIG_ID}/rows \
   -H "content-type: application/x-www-form-urlencoded" \
   -H "x-storageapi-token: ${KBC_TOKEN}" \
   -d "configuration={\"a\": \"b\"}")
@@ -112,9 +116,9 @@ printf "Configuration row: ${KBC_ROW_ID}"
 set +e
 php /code/main.php
 if [ "$?" -eq 1 ]; then
-	printf "\nExit code correct\n" >&1
+	printf "\nExit code correct\n\n" >&1
 else
-	printf "\nExit code incorrect\n" >&2
+	printf "\nExit code incorrect\n\n" >&2
 	exit 1
 fi
 set -e
