@@ -32,6 +32,8 @@ try {
             $reader->downloadFiles($validator->getInput()['files'], $validator->getDataDir() . '/in/files/');
         } catch (InvalidInputException $e) {
             throw new InvalidInputException($e->getMessage(), \Keboola\DataLoader\ConfigValidator::FILES_ERROR, $e);
+        } catch (\Keboola\StorageApi\ClientException $e) {
+        throw new InvalidInputException($e->getMessage(), \Keboola\DataLoader\ConfigValidator::FILES_CLIENT_ERROR, $e);
         }
     } else {
         $log->info("Input files empty.", ['runId' => $runId]);
@@ -41,6 +43,8 @@ try {
             $reader->downloadTables($validator->getInput()['tables'], $validator->getDataDir() . '/in/tables/');
         } catch (InvalidInputException $e) {
             throw new InvalidInputException($e, \Keboola\DataLoader\ConfigValidator::TABLES_ERROR, $e);
+        } catch (\Keboola\StorageApi\ClientException $e) {
+            throw new InvalidInputException($e->getMessage(), \Keboola\DataLoader\ConfigValidator::TABLES_CLIENT_ERROR, $e);
         }
     } else {
         $log->info("Input tables empty.", ['runId' => $runId]);
