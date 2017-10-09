@@ -33,7 +33,7 @@ try {
         } catch (InvalidInputException $e) {
             throw new InvalidInputException($e->getMessage(), \Keboola\DataLoader\ConfigValidator::FILES_ERROR, $e);
         } catch (\Keboola\StorageApi\ClientException $e) {
-        throw new InvalidInputException($e->getMessage(), \Keboola\DataLoader\ConfigValidator::FILES_CLIENT_ERROR, $e);
+            throw new InvalidInputException($e->getMessage(), \Keboola\DataLoader\ConfigValidator::FILES_CLIENT_ERROR, $e);
         }
     } else {
         $log->info("Input files empty.", ['runId' => $runId]);
