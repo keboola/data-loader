@@ -35,6 +35,7 @@ class TransformationConfig implements ConfigurationInterface
                 ->scalarNode("source")->isRequired()->end()
                 ->scalarNode("destination")->end()
                 ->integerNode("days")->treatNullLike(0)->end()
+                ->scalarNode("changed_since")->treatNullLike("")->end()
                 ->arrayNode("columns")->prototype("scalar")->end()->end()
                 ->integerNode("limit")->end()
                 ->scalarNode("where_column")->end()
