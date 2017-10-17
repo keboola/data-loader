@@ -64,7 +64,7 @@ export KBC_ROW_ID=$(echo ${COMMAND_RESULT} | grep -o 'Row [0-9]* added' | grep -
 printf "Configuration row: ${KBC_ROW_ID}\n"
 
 php /code/main.php
-
+ls /data/in/files
 # Check the results
 fileCount=$(ls /data/in/files | grep -c 'in.c-main.source.csv')
 
