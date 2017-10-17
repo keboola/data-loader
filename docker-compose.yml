@@ -6,3 +6,10 @@ services:
     tty: true
     stdin_open: true
     command: bash
+  dev:
+    image: keboola/data-loader
+    volumes:
+      - ./:/code
+    tty: true
+    stdin_open: true
+    command: bash

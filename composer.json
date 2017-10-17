@@ -14,9 +14,9 @@
         "phpunit/phpunit": "^6.1"
     },
     "require": {
-        "keboola/storage-api-client": "^6.3",
+        "keboola/storage-api-client": "^7.0",
         "symfony/config": "^2.8",
-        "keboola/input-mapping": "^2.0",
+        "keboola/input-mapping": "^3.1",
         "monolog/monolog": "^1.22",
         "keboola/php-utils": "^1.0",
         "php": ">=7.0"

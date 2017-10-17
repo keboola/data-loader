@@ -18,7 +18,7 @@
         }
     ],
     "packages": [],
-    "tags": ["table-export"],
+    "tags": ["my-file"],
     "queries": [
         "thi is some script\ncode on multiple lines"
     ]
