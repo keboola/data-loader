@@ -8,7 +8,8 @@
             "destination": "filtered.csv",
             "whereColumn": "id",
             "whereOperator": "ne",
-            "whereValues": ["88156763", "77183447"]
+            "whereValues": ["88156763", "77183447"],
+            "indexes": []
         }
     ],
     "output": [

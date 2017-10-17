@@ -31,6 +31,7 @@ class TransformationConfig implements ConfigurationInterface
         /* accept relevant stuff from https://github.com/keboola/transformation-bundle/blob/master/Resources/schemas/docker.json
         and \Keboola\InputMapping\Configuration::configurenode() */
         $node
+            ->ignoreExtraKeys(true)
             ->children()
                 ->scalarNode("source")->isRequired()->end()
                 ->scalarNode("destination")->end()
