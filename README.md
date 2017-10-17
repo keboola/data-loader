@@ -19,3 +19,23 @@ The following environment variables are used for configuration:
 Either KBC_EXPORT_CONFIG or the combination of KBC_CONFIG_ID, KBC_CONFIG_VERSION, KBC_ROW_ID is required.
 
 Run the loader with `php main.php`.
+
+## Development
+
+### Init
+
+```
+git clone https://github.com/keboola/data-loader
+cd data-loader
+docker-compose build
+docker-compose run --rm dev composer install
+```
+
+### Tests
+
+```
+export KBC_TOKEN=
+export KBC_STORAGEAPI_URL=https://connection.keboola.com
+docker-compose run --rm -e KBC_TOKEN -e KBC_STORAGEAPI_URL dev /code/Tests/run.sh
+docker-compose run --rm -e KBC_TOKEN -e KBC_STORAGEAPI_URL dev /code/Tests/run-config.sh  
+```
