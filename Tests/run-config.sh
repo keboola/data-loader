@@ -11,7 +11,7 @@ curl -sS --fail https://s3.amazonaws.com/keboola-storage-api-cli/builds/sapi-cli
 php /code/Tests/sapi-client.phar purge-project --token=${KBC_TOKEN}
 php /code/Tests/sapi-client.phar create-bucket --token=${KBC_TOKEN} "in" "main"
 php /code/Tests/sapi-client.phar create-table --token=${KBC_TOKEN} "in.c-main" "source" /code/Tests/source.csv
-php /code/Tests/uploadFixtures.php
+php /code/Tests/uploadFiles.php
 
 # Create configuration
 export KBC_CONFIG_VERSION=2
