@@ -11,6 +11,7 @@ curl -sS --fail https://s3.amazonaws.com/keboola-storage-api-cli/builds/sapi-cli
 php /code/Tests/sapi-client.phar purge-project --token=${KBC_TOKEN}
 php /code/Tests/sapi-client.phar create-bucket --token=${KBC_TOKEN} "in" "main"
 php /code/Tests/sapi-client.phar create-table --token=${KBC_TOKEN} "in.c-main" "source" /code/Tests/source.csv
+php /code/Tests/uploadFixtures.php
 
 # Create configuration
 export KBC_CONFIG_VERSION=2
@@ -64,14 +65,13 @@ export KBC_ROW_ID=$(echo ${COMMAND_RESULT} | grep -o 'Row [0-9]* added' | grep -
 printf "Configuration row: ${KBC_ROW_ID}\n"
 
 php /code/main.php
-ls /data/in/files
 # Check the results
-fileCount=$(ls /data/in/files | grep -c 'in.c-main.source.csv')
+fileCount=$(ls /data/in/files | grep -c '_dummy')
 
-if [ "$fileCount" -eq 3 ]; then
-  printf "\n3 Files found.\n\n" >&1
+if [ "$fileCount" -eq 2 ]; then
+  printf "\n2 Files found.\n\n" >&1
 else
-  printf "\n3 Files not found (found '$fileCount').\n\n" >&2
+  printf "\n2 Files not found (found '$fileCount').\n\n" >&2
   exit 1
 fi
 
