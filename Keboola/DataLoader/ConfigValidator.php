@@ -146,6 +146,7 @@ class ConfigValidator
             $table['where_values'] = $table['where_values'] ?? $table['whereValues'] ?? null;
             $table['where_column'] = $table['where_column'] ?? $table['whereColumn'] ?? null;
             $table['where_operator'] = $table['where_operator'] ?? $table['whereOperator'] ?? null;
+            $table['changed_since'] = $table['changed_since'] ?? $table['changedSince'] ?? null;
         }
         if (!empty($rowData['configuration']['tags'])) {
             $this->input['files'][0]['tags'] = $rowData['configuration']['tags'];
