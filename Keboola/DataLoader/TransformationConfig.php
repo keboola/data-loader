@@ -48,6 +48,7 @@ class TransformationConfig implements ConfigurationInterface
                         ->thenInvalid("Invalid operator in where_operator %s.")
                     ->end()
                 ->end()
+                ->scalarNode("changedSince")->treatNullLike("")->end()
                 ->scalarNode("whereColumn")->end()
                 ->arrayNode("whereValues")->prototype("scalar")->end()->end()
                 ->scalarNode("whereOperator")
