@@ -143,10 +143,30 @@ class ConfigValidator
         $this->type = $rowData['configuration']['type'];
         $this->input['tables'] = $rowData['configuration']['input'];
         foreach ($this->input['tables'] as &$table) {
-            $table['where_values'] = $table['where_values'] ?? $table['whereValues'] ?? null;
-            $table['where_column'] = $table['where_column'] ?? $table['whereColumn'] ?? null;
-            $table['where_operator'] = $table['where_operator'] ?? $table['whereOperator'] ?? null;
-            $table['changed_since'] = $table['changed_since'] ?? $table['changedSince'] ?? null;
+            if (count($table['whereValues']) > 0) {
+                $table['where_values'] = $table['whereValues'];
+            }
+            if (isset($table['whereValues'])) {
+                unset($table['whereValues']);
+            }
+            if ($table['whereColumn'] != '') {
+                $table['where_column'] = $table['whereColumn'];
+            }
+            if (isset($table['whereColumn'])) {
+                unset($table['whereColumn']);
+            }
+            if ($table['whereOperator'] != '') {
+                $table['where_operator'] = $table['whereOperator'];
+            }
+            if (isset($table['whereOperator'])) {
+                unset($table['whereOperator']);
+            }
+            if ($table['changedSince'] != '') {
+                $table['changed_since'] = $table['changedSince'];
+            }
+            if (isset($table['changedSince'])) {
+                unset($table['changedSince']);
+            }
         }
         if (!empty($rowData['configuration']['tags'])) {
             $this->input['files'][0]['tags'] = $rowData['configuration']['tags'];
