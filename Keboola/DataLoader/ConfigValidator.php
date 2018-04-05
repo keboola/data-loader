@@ -111,7 +111,7 @@ class ConfigValidator
         $configId = getenv('KBC_CONFIG_ID');
         $versionId = getenv('KBC_CONFIG_VERSION');
         $rowId = getenv('KBC_ROW_ID');
-        $this->logger->info("Reading configuration " . $configId . " , row: " . $rowId);
+        $this->logger->info("Reading configuration " . $configId . ", row: " . $rowId);
         if (empty($configId) || empty($rowId) || empty($versionId)) {
             throw new InvalidInputException(
                 "Environment KBC_CONFIG_ID or KBC_ROW_ID or KBC_CONFIG_VERSION is empty.",
