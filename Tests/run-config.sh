@@ -40,10 +40,23 @@ file="/data/in/tables/destination.csv"
 if [ -f "$file" ]
 then
 	printf "\nFile $file found.\n\n" >&1
+	diff $file /code/Tests/files/source.csv
 else
 	printf "\nFile $file not found.\n\n" >&2
 	exit 1
 fi
+
+file="/data/in/tables/filtered.csv"
+
+if [ -f "$file" ]
+then
+	printf "\nFile $file found.\n\n" >&1
+	diff $file /code/Tests/files/filtered.csv
+else
+	printf "\nFile $file not found.\n\n" >&2
+	exit 1
+fi
+
 
 # Create configuration
 export KBC_CONFIG_VERSION=2

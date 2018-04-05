@@ -2,16 +2,7 @@
     "backend": "docker",
     "description": "Test configuration",
     "type": "r",
-    "input": [
-        {
-            "source": "in.c-main.source",
-            "destination": "filtered.csv",
-            "whereColumn": "id",
-            "whereOperator": "ne",
-            "whereValues": ["88156763", "77183447"],
-            "indexes": []
-        }
-    ],
+    "input": [],
     "output": [
         {
             "destination": "out.c-main.r-transpose",
