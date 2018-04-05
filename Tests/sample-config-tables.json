@@ -6,6 +6,14 @@
         {
             "source": "in.c-main.source",
             "destination": "destination.csv"
+        },
+        {
+            "source": "in.c-main.source",
+            "destination": "filtered.csv",
+            "whereColumn": "id",
+            "whereOperator": "ne",
+            "whereValues": ["88156763", "77183447"],
+            "indexes": []
         }
     ],
     "output": [
@@ -13,7 +21,7 @@
             "destination": "out.c-main.r-transpose",
             "source": "transpose.csv"
         }
-    ],    
+    ],
     "packages": [],
     "tags": [],
     "queries": [

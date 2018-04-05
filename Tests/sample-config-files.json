@@ -5,6 +5,10 @@
     "input": [
         {
             "source": "in.c-main.source",
+            "destination": "destination.csv"
+        },
+        {
+            "source": "in.c-main.source",
             "destination": "filtered.csv",
             "whereColumn": "id",
             "whereOperator": "ne",
