@@ -11,8 +11,8 @@
             "source": "in.c-main.source",
             "destination": "filtered.csv",
             "whereColumn": "id",
-            "whereOperator": "ne",
-            "whereValues": ["88156763", "77183447"],
+            "whereOperator": "eq",
+            "whereValues": ["68640847"],
             "indexes": []
         }
     ],
