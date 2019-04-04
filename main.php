@@ -1,23 +1,30 @@
 <?php
 
-require "vendor/autoload.php";
+declare(strict_types=1);
 
+require 'vendor/autoload.php';
+
+use Keboola\DataLoader\ConfigValidator;
 use Keboola\InputMapping\Exception\InvalidInputException;
+use Keboola\InputMapping\Reader\Options\InputTableOptionsList;
 use Keboola\InputMapping\Reader\Reader;
+use Keboola\InputMapping\Reader\State\InputTableStateList;
+use Keboola\StorageApi\ClientException;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Symfony\Component\Filesystem\Filesystem;
 
 $log = new Logger('app-logger');
 $log->pushHandler(new StreamHandler('php://stdout'));
-$log->info("Starting Data Loader");
+$log->info('Starting Data Loader');
 
 try {
-    $validator = new \Keboola\DataLoader\ConfigValidator();
+    $validator = new ConfigValidator();
     $validator->validate($log);
     $runId = $validator->getRunId();
 
     $reader = new Reader($validator->getClient(), $log);
-    $fs = new \Symfony\Component\Filesystem\Filesystem();
+    $fs = new Filesystem();
     $fs->mkdir($validator->getDataDir() . '/in/tables/');
     $fs->mkdir($validator->getDataDir() . '/in/files/');
     $fs->mkdir($validator->getDataDir() . '/out/tables/');
@@ -25,41 +32,45 @@ try {
     if ($validator->getScript()) {
         file_put_contents($validator->getDataDir() . 'main.' . $validator->getExtension(), $validator->getScript());
     } else {
-        $log->info("Script is empty.", ['runId' => $runId]);
+        $log->info('Script is empty.', ['runId' => $runId]);
     }
     if (!empty($validator->getInput()['files'])) {
         try {
             $reader->downloadFiles($validator->getInput()['files'], $validator->getDataDir() . '/in/files/');
         } catch (InvalidInputException $e) {
-            throw new InvalidInputException($e->getMessage(), \Keboola\DataLoader\ConfigValidator::FILES_ERROR, $e);
-        } catch (\Keboola\StorageApi\ClientException $e) {
-            throw new InvalidInputException($e->getMessage(), \Keboola\DataLoader\ConfigValidator::FILES_CLIENT_ERROR, $e);
+            throw new InvalidInputException($e->getMessage(), ConfigValidator::FILES_ERROR, $e);
+        } catch (ClientException $e) {
+            throw new InvalidInputException($e->getMessage(), ConfigValidator::FILES_CLIENT_ERROR, $e);
         }
     } else {
-        $log->info("Input files empty.", ['runId' => $runId]);
+        $log->info('There are no input files.', ['runId' => $runId]);
     }
     if (!empty($validator->getInput()['tables'])) {
         try {
-            $reader->downloadTables($validator->getInput()['tables'], $validator->getDataDir() . '/in/tables/');
+            $reader->downloadTables(
+                new InputTableOptionsList($validator->getInput()['tables']),
+                new InputTableStateList([]),
+                $validator->getDataDir() . '/in/tables/'
+            );
         } catch (InvalidInputException $e) {
-            throw new InvalidInputException($e, \Keboola\DataLoader\ConfigValidator::TABLES_ERROR, $e);
-        } catch (\Keboola\StorageApi\ClientException $e) {
-            throw new InvalidInputException($e->getMessage(), \Keboola\DataLoader\ConfigValidator::TABLES_CLIENT_ERROR, $e);
+            throw new InvalidInputException($e, ConfigValidator::TABLES_ERROR, $e);
+        } catch (ClientException $e) {
+            throw new InvalidInputException($e->getMessage(), ConfigValidator::TABLES_CLIENT_ERROR, $e);
         }
     } else {
-        $log->info("Input tables empty.", ['runId' => $runId]);
+        $log->info('There are no input tables.', ['runId' => $runId]);
     }
 } catch (InvalidInputException $e) {
     $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
     if ($e->getCode()) {
         exit($e->getCode());
     } else {
-        exit(\Keboola\DataLoader\ConfigValidator::INTERNAL_II_ERROR);
+        exit(ConfigValidator::INTERNAL_II_ERROR);
     }
 } catch (\Keboola\StorageApi\Exception $e) {
     $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
-    exit(\Keboola\DataLoader\ConfigValidator::INTERNAL_CLIENT_ERROR);
-} catch (\Exception $e) {
+    exit(ConfigValidator::INTERNAL_CLIENT_ERROR);
+} catch (Exception $e) {
     $log->critical($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
     exit(2);
 }
