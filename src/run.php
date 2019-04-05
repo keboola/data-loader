@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require 'vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Keboola\DataLoader\ConfigValidator;
 use Keboola\InputMapping\Exception\InvalidInputException;
