@@ -14,7 +14,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 
-class BaseDatadirTest extends AbstractDatadirTestCase
+abstract class BaseDatadirTest extends AbstractDatadirTestCase
 {
     /**
      * @var Client
@@ -89,6 +89,10 @@ class BaseDatadirTest extends AbstractDatadirTestCase
             $finder = new Finder();
             $csv = iterator_to_array($finder->files()->in($tempDatadir . '/in/tables')->notName('*.manifest'));
             self::assertEquals(count($csv), count($manifests));
+            foreach ($manifests as $manifest) {
+                /** @var SplFileInfo $manifest */
+                unlink($manifest->getPathname());
+            }
             $finder = new Finder();
             $manifests = iterator_to_array($finder->files()->in($tempDatadir . '/in/files')->name('*.manifest'));
             $finder = new Finder();
