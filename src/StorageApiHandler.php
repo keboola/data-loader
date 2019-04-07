@@ -39,14 +39,6 @@ class StorageApiHandler extends AbstractHandler
         $event->setComponent($this->appName);
         $event->setMessage(sanitizeUtf8($record['message']));
         $event->setRunId($this->storageApiClient->getRunId());
-        $results = [];
-        if (isset($record['context']['exceptionId'])) {
-            $results['exceptionId'] = $record['context']['exceptionId'];
-        }
-        if (empty(getenv('KBC_RUNID'))) {
-            $results['job'] = getenv('KBC_RUNID');
-        }
-        $event->setResults($results);
 
         switch ($record['level']) {
             case Logger::ERROR:
