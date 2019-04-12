@@ -1,0 +1,5 @@
+parameters:
+    ignoreErrors:
+        - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\).#'
+        - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::ignoreExtraKeys\(\).#'
+        - '#Parameter \#1 \$previousRunId of method Keboola\\StorageApi\\Client::generateRunId\(\) expects null, string given.#'

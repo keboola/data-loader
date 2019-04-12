@@ -25,7 +25,7 @@ else
 	exit 1
 fi
 
-
+sleep 10
 export KBC_EXPORT_CONFIG="{\"storage\":{\"input\":{\"tables\":[{\"source\":\"in.c-main.source\",\"destination\":\"destination.csv\",\"changed_since\":\"-1 seconds\"}]}}}"
 file="/data/in/tables/destination.csv"
 

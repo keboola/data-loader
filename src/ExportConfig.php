@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DataLoader;
 
 use Keboola\InputMapping\Configuration\File;
@@ -9,7 +11,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class ExportConfig implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder();
         $root = $treeBuilder->root('configuration');
