@@ -2,3 +2,4 @@ composer.phar
 /vendor/
 .idea/
 /Tests/sapi-client.phar
+/.env
