@@ -27,11 +27,11 @@ class ExportConfigTest extends TestCase
     public function configurationProvider(): array
     {
         return [
-            [
+            'empty config' => [
                 [],
                 [],
             ],
-            [
+            'full config' => [
                 [
                     'storage' => [
                         'input' => [

@@ -26,11 +26,11 @@ class TransformationConfigTest extends TestCase
     public function configurationProvider(): array
     {
         return [
-            [
+            'empty config' => [
                 [],
                 [],
             ],
-            [
+            'simple config' => [
                 [
                     'configuration' => [
                         'backend' => 'docker',
@@ -47,7 +47,7 @@ class TransformationConfigTest extends TestCase
                     ],
                 ],
             ],
-            [
+            'full config' => [
                 [
                     'configuration' => [
                         'backend' => 'docker',
