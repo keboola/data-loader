@@ -5,11 +5,14 @@ services:
 before_script:
   - docker-compose build data-loader
 script: 
-  - docker-compose run --rm -e KBC_TOKEN -e KBC_STORAGEAPI_URL data-loader /code/Tests/run.sh
-  - docker-compose run --rm -e KBC_TOKEN -e KBC_STORAGEAPI_URL data-loader /code/Tests/run-config.sh  
+  - docker-compose run --rm -e KBC_TEST_TOKEN -e KBC_TEST_URL data-loader composer ci
 deploy:
   provider: script
   skip_cleanup: true
   script: ./deploy.sh
   on:
     tags: true  
+notifications:
+  slack:
+    secure: tlQmYemW+/5x/ZIPt2ZsLJC0A2ondC87yuP0cU1v7QbEw+ONEvCKPGTNl5xzpHsCod4bsBDbNSHlN/ufNdb/Bwv4V5NUUREljAWQ4cahmZadc3favTxknnSVLHBXJtTW3wFrulC26JVKGm/np0AzdOd7sCfferT9Qoon4l8D4/aMoWhzw+8ydAq0nSOnaQLP98uS0/+WHU+PYf0T3gOOgr+ff5oWasyPYJlxrvUXv41GI1QxJk+dYEm+KVRb2yUXpR4nIesWErqhpUytpL93qymfrzm3pzkuiASE9Zgp1YQlockwHdHgwwYKtN1tXDC31y6H61uJOg5oX8Rp4ogTkErQtZ8xz7AjEPIjd31n7cNLJNVhFPEq7n6tJtsKDIqO6c0ZKlzvW11J3mD1tEC6TZ2omdAihNN/Xyv1zDcsu1cTE3tmm4BoosGE95ijdwRnoiEiyENANOtfVk42SSChQe1gKhO2M0+rQHX0+hnbDJtXwsQCFtRi8CzIr11YBuauE0Ek389s/1AaHmNM1n10BcgaSVFDsdRnxpHZW2mye+jeLnNLNun/AfsV26vpKC5yGDNflNGklrNGoxTNWrzCSaE6YCcuYoPleMzQDzT87SyhDeFJ2RbiDVtpBg7s1xC7MiZk+yNgNDaZahbxmtGlgZ2Jyt1TEVAchW3llL596kA=
+  email: false

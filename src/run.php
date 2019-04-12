@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require 'vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Keboola\DataLoader\ConfigValidator;
 use Keboola\InputMapping\Exception\InvalidInputException;
@@ -53,7 +53,7 @@ try {
                 $validator->getDataDir() . '/in/tables/'
             );
         } catch (InvalidInputException $e) {
-            throw new InvalidInputException($e, ConfigValidator::TABLES_ERROR, $e);
+            throw new InvalidInputException($e->getMessage(), ConfigValidator::TABLES_ERROR, $e);
         } catch (ClientException $e) {
             throw new InvalidInputException($e->getMessage(), ConfigValidator::TABLES_CLIENT_ERROR, $e);
         }
@@ -70,7 +70,7 @@ try {
 } catch (\Keboola\StorageApi\Exception $e) {
     $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
     exit(ConfigValidator::INTERNAL_CLIENT_ERROR);
-} catch (Exception $e) {
+} catch (Throwable $e) {
     $log->critical($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
     exit(2);
 }

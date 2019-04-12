@@ -7,6 +7,7 @@ WORKDIR /code
 RUN apt-get update && apt-get install -y \
 	    git \
         libzip-dev \
+        unzip \
   	--no-install-recommends && rm -r /var/lib/apt/lists/* \
 	&& docker-php-ext-install zip
 

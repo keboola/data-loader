@@ -28,7 +28,7 @@ class TransformationConfig implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    public static function configureTableNode(NodeDefinition $node): void
+    private static function configureTableNode(NodeDefinition $node): void
     {
         /* accept relevant stuff from
         https://github.com/keboola/transformation-bundle/blob/master/Resources/schemas/docker.json
