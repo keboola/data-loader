@@ -292,7 +292,7 @@ class ConfigValidatorTest extends TestCase
         $validator->validate($logger);
     }
 
-    public function testInvalidTransformationConfig1(): void
+    public function testInvalidTransformationConfigMissingRowIdConfigVersion(): void
     {
         putenv('KBC_CONFIG_ID=123');
         $logger = new Logger('test', [new NullHandler()]);
@@ -303,7 +303,7 @@ class ConfigValidatorTest extends TestCase
         $validator->validate($logger);
     }
 
-    public function testInvalidTransformationConfig2(): void
+    public function testInvalidTransformationConfigMissingConfigVersion(): void
     {
         putenv('KBC_CONFIG_ID=123');
         putenv('KBC_ROW_ID=123');
@@ -315,7 +315,7 @@ class ConfigValidatorTest extends TestCase
         $validator->validate($logger);
     }
 
-    public function testInvalidTransformationConfig3(): void
+    public function testInvalidTransformationConfigMissingRowId(): void
     {
         putenv('KBC_CONFIG_ID=123');
         putenv('KBC_CONFIG_VERSION=123');
