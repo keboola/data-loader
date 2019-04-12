@@ -171,7 +171,7 @@ class TransformationSandboxTest extends BaseDatadirTest
                 ' app-logger.INFO: DataLoader is loading data  ',
                 ' app-logger.INFO: Reading configuration ' . $vars['configId'] . ', row: ' . $vars['rowId'] . '  ',
                 ' app-logger.INFO: Loading files with tags array (   0 => \'my-file\', )  ',
-                ' app-logger.INFO: Script size 43  ',
+                ' app-logger.INFO: Loaded transformation script (size 43).  ',
                 ' app-logger.INFO: Fetching file dummy (' . $fileId . ').  ',
                 ' app-logger.INFO: Fetched file dummy (' . $fileId . ').  ',
                 ' app-logger.INFO: All files were fetched.  ',
