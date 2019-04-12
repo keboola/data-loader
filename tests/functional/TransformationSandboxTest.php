@@ -8,6 +8,7 @@ use Keboola\DatadirTests\DatadirTestSpecification;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Options\Components\Configuration;
 use Keboola\StorageApi\Options\Components\ConfigurationRow;
+use Keboola\StorageApi\Options\Components\ListComponentConfigurationsOptions;
 use Keboola\StorageApi\Options\FileUploadOptions;
 use Keboola\StorageApi\Options\ListFilesOptions;
 
@@ -25,11 +26,17 @@ class TransformationSandboxTest extends BaseDatadirTest
         foreach ($files as $file) {
             $this->client->deleteFile($file['id']);
         }
+        $this->components = new Components($this->client);
+        $options = new ListComponentConfigurationsOptions();
+        $options->setComponentId('transformation');
+        $configs = $this->components->listComponentConfigurations($options);
+        foreach ($configs as $config) {
+            $this->components->deleteConfiguration('transformation', $config['id']);
+        }
     }
 
     private function createConfiguration(array $data): array
     {
-        $this->components = new Components($this->client);
         $configuration = new Configuration();
         $configuration->setName('data-loader-test');
         $configuration->setComponentId('transformation');
@@ -113,7 +120,6 @@ class TransformationSandboxTest extends BaseDatadirTest
             ]),
             $output
         );
-        $this->components->deleteConfiguration('transformation', $vars['configId']);
     }
 
     public function testFiles(): void
@@ -180,7 +186,6 @@ class TransformationSandboxTest extends BaseDatadirTest
             ]),
             $output
         );
-        $this->components->deleteConfiguration('transformation', $vars['configId']);
         unlink($targetFile);
     }
 
@@ -253,7 +258,5 @@ class TransformationSandboxTest extends BaseDatadirTest
             ]),
             $output
         );
-        $this->components->deleteConfiguration('transformation', $vars['configId']);
     }
-
 }
