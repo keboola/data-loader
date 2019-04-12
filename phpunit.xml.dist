@@ -7,7 +7,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         bootstrap="tests/phpunit/bootstrap.php">
+         bootstrap="vendor/autoload.php">
     <testsuite name="Main Test Suite">
         <directory>tests/phpunit</directory>
     </testsuite>
@@ -19,5 +19,5 @@
                 <file>main.php</file>
             </exclude>
         </whitelist>
-    </filter>    
+    </filter>
 </phpunit>
