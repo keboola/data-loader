@@ -176,7 +176,7 @@ class ConfigValidator
             $this->logger->info('Loading files with tags ' . var_export($this->input['files'][0]['tags'], true));
         }
         $this->script = implode('\n', $rowData['configuration']['queries']);
-        $this->logger->info('Script size ' . strlen($this->script));
+        $this->logger->info(sprintf('Loaded transformation script (size %s).', strlen($this->script)));
     }
 
     public function validate(Logger $logger): void
