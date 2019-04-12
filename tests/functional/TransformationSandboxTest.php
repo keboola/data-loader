@@ -194,11 +194,11 @@ class TransformationSandboxTest extends BaseDatadirTest
             'KBC_CONFIG_VERSION' => '2',
         ];
         $specification = new DatadirTestSpecification(
-            __DIR__ . '/transformation-sandbox-tables/source/data',
+            __DIR__ . '/transformation-sandbox-error/source/data',
             171,
             null,
             '',
-            __DIR__ . '/transformation-sandbox-tables/expected/data/in'
+            __DIR__ . '/transformation-sandbox-error/expected/data/in'
         );
         $tempDatadir = $this->getTempDatadir($specification);
         $process = $this->runScript($tempDatadir->getTmpFolder(), $envs);
@@ -230,11 +230,11 @@ class TransformationSandboxTest extends BaseDatadirTest
             'KBC_CONFIG_VERSION' => '2',
         ];
         $specification = new DatadirTestSpecification(
-            __DIR__ . '/transformation-sandbox-tables/source/data',
+            __DIR__ . '/transformation-sandbox-error/source/data',
             171,
             null,
             '',
-            __DIR__ . '/transformation-sandbox-tables/expected/data/in'
+            __DIR__ . '/transformation-sandbox-error/expected/data/in'
         );
         $tempDatadir = $this->getTempDatadir($specification);
         $process = $this->runScript($tempDatadir->getTmpFolder(), $envs);
