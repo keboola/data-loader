@@ -49,7 +49,7 @@ class StorageApiHandler extends AbstractHandler
             case Logger::ALERT:
                 $type = Event::TYPE_ERROR;
                 $event->setMessage('Application error');
-                $event->setDescription('Contact support@keboola.com');
+                $event->setDescription('Please contact Keboola Support for help.');
                 break;
             case Logger::WARNING:
             case Logger::NOTICE:
