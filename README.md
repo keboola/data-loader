@@ -7,7 +7,7 @@ to Docker Sandboxes. There are two modes of operation:
 - A plain sandbox is being created - `KBC_EXPORT_CONFIG` variable needs to be provided. 
 
 ## Usage
-The following environment variables are used for configuration:
+The following environment variables are used for configuration (see .env.template):
 
 - `KBC_EXPORT_CONFIG` - Serialized JSON configuration of input mapping, 
     see [description](https://developers.keboola.com/extend/common-interface/config-file/).
