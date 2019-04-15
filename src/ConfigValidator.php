@@ -109,6 +109,7 @@ class ConfigValidator
             );
         }
         $this->input = $configData['storage']['input'];
+        $this->type = $configData['parameters']['type'];
     }
 
     private function validateConfig(): void
