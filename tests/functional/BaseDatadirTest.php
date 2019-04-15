@@ -9,6 +9,7 @@ use Keboola\DatadirTests\AbstractDatadirTestCase;
 use Keboola\DatadirTests\DatadirTestSpecificationInterface;
 use Keboola\DatadirTests\Exception\DatadirTestsException;
 use Keboola\StorageApi\Client;
+use Keboola\StorageApi\Exception;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -28,7 +29,13 @@ abstract class BaseDatadirTest extends AbstractDatadirTestCase
             self::fail('KBC_TEST_TOKEN and KBC_TEST_URL environment variables must be set.');
         }
         $this->client = new Client(['token' => getenv('KBC_TEST_TOKEN'), 'url' => getenv('KBC_TEST_URL')]);
-        $this->client->dropBucket('in.c-main', ['force' => true]);
+        try {
+            $this->client->dropBucket('in.c-main', ['force' => true]);
+        } catch (Exception $e) {
+            if ($e->getCode() !== 404) {
+                throw $e;
+            }
+        }
         $this->client->createBucket('main', 'in');
         $this->client->createTable('in.c-main', 'source', new CsvFile(__DIR__ . '/files/source.csv'));
     }

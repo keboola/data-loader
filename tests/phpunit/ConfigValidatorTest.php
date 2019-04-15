@@ -229,6 +229,27 @@ class ConfigValidatorTest extends TestCase
         self::assertNotEmpty($validator->getClient());
     }
 
+    public function testValidatePlainSandboxHalfEmptyConfig(): void
+    {
+        $configuration = ['storage' => []];
+        putenv('KBC_EXPORT_CONFIG=' . json_encode($configuration));
+        $logger = new Logger('test', [new NullHandler()]);
+        $validator = new ConfigValidator();
+        $validator->validate($logger);
+
+        self::assertEquals('', $validator->getScript());
+        self::assertEquals('/data/', $validator->getDataDir());
+        self::assertEquals(
+            [
+                'tables' => [],
+                'files' => [],
+            ],
+            $validator->getInput()
+        );
+        self::assertNotEmpty($validator->getRunId());
+        self::assertNotEmpty($validator->getClient());
+    }
+
     public function testEmptyToken(): void
     {
         putenv('KBC_TOKEN=');

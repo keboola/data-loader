@@ -17,9 +17,11 @@ class ExportConfig implements ConfigurationInterface
         $root = $treeBuilder->root('configuration');
         $definition = $root->children()
             ->arrayNode('storage')
-            ->children()
-            ->arrayNode('input')
-            ->children();
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('input')
+                    ->addDefaultsIfNotSet()
+                    ->children();
         File::configureNode($definition->arrayNode('files')->prototype('array'));
         Table::configureNode($definition->arrayNode('tables')->prototype('array'));
         return $treeBuilder;

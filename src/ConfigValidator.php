@@ -157,13 +157,13 @@ class ConfigValidator
             if (count($table['whereValues']) > 0) {
                 $table['where_values'] = $table['whereValues'];
             }
-            if ($table['whereColumn'] !== '') {
+            if (!empty($table['whereColumn'])) {
                 $table['where_column'] = $table['whereColumn'];
             }
-            if ($table['whereOperator'] !== '') {
+            if (!empty($table['whereOperator'])) {
                 $table['where_operator'] = $table['whereOperator'];
             }
-            if ($table['changedSince'] !== '') {
+            if (!empty($table['changedSince'])) {
                 $table['changed_since'] = $table['changedSince'];
             }
             unset($table['whereValues']);

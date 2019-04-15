@@ -122,6 +122,68 @@ class TransformationSandboxTest extends BaseDatadirTest
         );
     }
 
+    public function testTablesMinimal(): void
+    {
+        $configuration = [
+            'backend' => 'docker',
+            'description' => 'Test configuration',
+            'type' => 'r',
+            'input' => [
+                [
+                    'source' => 'in.c-main.source',
+                    'destination' => 'destination.csv',
+                ],
+            ],
+            'output' => [
+                [
+                    'destination' => 'out.c-main.r-transpose',
+                    'source' => 'transpose.csv',
+                ],
+            ],
+            'packages' => [],
+            'tags' => [],
+            'queries' => [
+                'this is some script\ncode on multiple lines',
+            ],
+        ];
+
+        $vars = $this->createConfiguration($configuration);
+        $envs = [
+            'KBC_TOKEN' => getenv('KBC_TEST_TOKEN'),
+            'KBC_STORAGEAPI_URL' => getenv('KBC_TEST_URL'),
+            'KBC_CONFIG_ID' => $vars['configId'],
+            'KBC_ROW_ID' => $vars['rowId'],
+            'KBC_CONFIG_VERSION' => '2',
+        ];
+        $specification = new DatadirTestSpecification(
+            __DIR__ . '/transformation-sandbox-tables-minimal/source/data',
+            0,
+            null,
+            '',
+            __DIR__ . '/transformation-sandbox-tables-minimal/expected/data/in'
+        );
+        $tempDatadir = $this->getTempDatadir($specification);
+        $process = $this->runScript($tempDatadir->getTmpFolder(), $envs);
+        $this->assertMatchesSpecification($specification, $process, $tempDatadir->getTmpFolder());
+        $output = $process->getOutput();
+        $output = preg_replace('#\[.*?\]#', '', $output);
+        $output = preg_replace('#\{.*?\}#', '', $output);
+        self::assertEquals(
+            implode("\n", [
+                ' app-logger.INFO: Starting Data Loader  ',
+                ' app-logger.INFO: DataLoader is loading data  ',
+                ' app-logger.INFO: Reading configuration ' . $vars['configId'] . ', row: ' . $vars['rowId'] . '  ',
+                ' app-logger.INFO: Loaded transformation script (size 43).  ',
+                ' app-logger.INFO: There are no input files.  ',
+                ' app-logger.INFO: Fetched table in.c-main.source.  ',
+                ' app-logger.INFO: Processing 1 table exports.  ',
+                ' app-logger.INFO: All tables were fetched.  ',
+                '',
+            ]),
+            $output
+        );
+    }
+
     public function testFiles(): void
     {
         $configuration = [
