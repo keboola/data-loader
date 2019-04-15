@@ -16,6 +16,12 @@ class ExportConfig implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $root = $treeBuilder->root('configuration');
         $definition = $root->children()
+            ->arrayNode('parameters')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('type')->defaultValue('python')->end()
+                ->end()
+            ->end()
             ->arrayNode('storage')
                 ->addDefaultsIfNotSet()
                 ->children()

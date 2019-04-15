@@ -308,7 +308,7 @@ class ConfigValidatorTest extends TestCase
         self::expectExceptionCode(171);
         self::expectExceptionMessage(
             'Configuration is invalid: Unrecognized option "bad_node" ' .
-            'under "configuration". Available option is "storage".'
+            'under "configuration". Available options are "parameters", "storage".'
         );
         $validator->validate($logger);
     }
@@ -417,9 +417,6 @@ class ConfigValidatorTest extends TestCase
         $validator = new ConfigValidator();
         $validator->validate($logger);
 
-        self::expectException(InvalidInputException::class);
-        self::expectExceptionCode(171);
-        self::expectExceptionMessage('Invalid transformation type "".');
-        $validator->getExtension();
+        self::assertEquals('py', $validator->getExtension());
     }
 }
