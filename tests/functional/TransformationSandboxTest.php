@@ -182,7 +182,6 @@ class TransformationSandboxTest extends BaseDatadirTest
             ]),
             $output
         );
-        $this->components->deleteConfiguration('transformation', $vars['configId']);
     }
 
     public function testFiles(): void
