@@ -29,7 +29,14 @@ class ExportConfigTest extends TestCase
         return [
             'empty config' => [
                 [],
-                [],
+                [
+                    'storage' => [
+                        'input' => [
+                            'files' => [],
+                            'tables' => [],
+                        ],
+                    ],
+                ],
             ],
             'full config' => [
                 [
