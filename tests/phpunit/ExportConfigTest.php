@@ -36,6 +36,9 @@ class ExportConfigTest extends TestCase
                             'tables' => [],
                         ],
                     ],
+                    'parameters' => [
+                        'type' => 'python',
+                    ],
                 ],
             ],
             'full config' => [
@@ -86,6 +89,9 @@ class ExportConfigTest extends TestCase
                             ],
                         ],
                     ],
+                    'parameters' => [
+                        'type' => 'python',
+                    ],
                 ],
             ],
         ];
@@ -101,7 +107,7 @@ class ExportConfigTest extends TestCase
         $processor = new Processor();
         self::expectException(InvalidConfigurationException::class);
         self::expectExceptionMessage(
-            'Unrecognized option "configuration" under "configuration". Available option is "storage".'
+            'Unrecognized option "configuration" under "configuration". Available options are "parameters", "storage".'
         );
         $processor->processConfiguration(new ExportConfig(), ['configuration' => $inData]);
     }
