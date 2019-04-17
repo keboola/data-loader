@@ -222,13 +222,8 @@ class ConfigValidator
         return $this->script;
     }
 
-    public function getExtension(): string
+    public function getType(): string
     {
-        switch ($this->type) {
-            case 'r':
-                return 'R';
-            case 'python':
-                return 'py';
-        }
+        return $this->type;
     }
 }
