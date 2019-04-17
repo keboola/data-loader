@@ -229,11 +229,6 @@ class ConfigValidator
                 return 'R';
             case 'python':
                 return 'py';
-            default:
-                throw new InvalidInputException(
-                    sprintf('Invalid transformation type "%s".', $this->type),
-                    self::CONFIGURATION_INVALID
-                );
         }
     }
 }
