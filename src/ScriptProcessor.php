@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace Keboola\DataLoader;
 
-use _HumbugBox01ece8fd5bed\Symfony\Component\Console\Exception\LogicException;
 use Aws\S3\S3Client;
-use Keboola\InputMapping\Configuration\File;
-use Keboola\InputMapping\Configuration\Table;
+use Keboola\DataLoader\ScriptProcessor\PythonTemplateAdapter;
+use Keboola\DataLoader\ScriptProcessor\RTemplateAdapter;
+use Keboola\DataLoader\ScriptProcessor\TemplateAdapter;
 use Keboola\InputMapping\Exception\InvalidInputException;
 use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Options\GetFileOptions;
 use Keboola\StorageApi\Options\ListFilesOptions;
+use LogicException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class ScriptProcessor
 {
-    const R_SANDBOX_TEMPLATE_TAG = '_r_sandbox_template_';
-    const PYTHON_SANDBOX_TEMPLATE_TAG = '_python_sandbox_template_';
-    const R_SANDBOX_TYPE = 'r';
-    const PYTHON_SANDBOX_TYPE = 'python';
+    public const PYTHON_SANDBOX_TEMPLATE_TAG = '_python_sandbox_template_';
+    public const R_SANDBOX_TEMPLATE_TAG = '_r_sandbox_template_';
+    public const PYTHON_SANDBOX_TYPE = 'python';
+    public const R_SANDBOX_TYPE = 'r';
+
     /**
      * @var Client
      */
@@ -35,8 +35,8 @@ class ScriptProcessor
     public static function getSandboxTags(): array
     {
         return [
-            'r' => '_r_sandbox_template_',
-            'python' => '_python_sandbox_template_',
+            self::PYTHON_SANDBOX_TYPE => self::PYTHON_SANDBOX_TEMPLATE_TAG,
+            self::R_SANDBOX_TYPE => self::R_SANDBOX_TEMPLATE_TAG,
         ];
     }
 
@@ -46,16 +46,6 @@ class ScriptProcessor
         $this->logger = $logger;
     }
 
-    private function getTagByType(string $type): string
-    {
-        switch ($type) {
-            case self::R_SANDBOX_TYPE:
-                return self::R_SANDBOX_TEMPLATE_TAG;
-            case self::PYTHON_SANDBOX_TYPE:
-                return self::PYTHON_SANDBOX_TEMPLATE_TAG;
-        }
-    }
-
     private function getProjectTemplateId(string $type): ?string
     {
         $options = new ListFilesOptions();
@@ -63,7 +53,16 @@ class ScriptProcessor
         $options->setLimit(1);
         $files = $this->client->listFiles($options);
         if ($files) {
-            return $files[0]['id'];
+            $file = $files[0];
+            $this->logger->info(
+                sprintf(
+                    'Found project template: "%s", created "%s", ID: %s.',
+                    $file['name'],
+                    $file['created'],
+                    $file['id']
+                )
+            );
+            return (string) $file['id'];
         }
         return null;
     }
@@ -72,23 +71,27 @@ class ScriptProcessor
     {
         $options = new ListFilesOptions();
         $tokenInfo = $this->client->verifyToken();
-        $options->setTags([self::getSandboxTags()[$type], $tokenInfo['description']]);
+        // can't use setTags because they're connected via OR condition
+        $options->setQuery(sprintf(
+            '(tags: "%s") AND (tags: "%s")',
+            self::getSandboxTags()[$type],
+            $tokenInfo['description']
+        ));
         $options->setLimit(1);
         $files = $this->client->listFiles($options);
         if ($files) {
-            return (string)$files[0]['id'];
+            $file = $files[0];
+            $this->logger->info(
+                sprintf(
+                    'Found user template: "%s", created "%s", ID: %s.',
+                    $file['name'],
+                    $file['created'],
+                    $file['id']
+                )
+            );
+            return (string) $file['id'];
         }
         return null;
-    }
-
-    private function getExtension(string $type): string
-    {
-        switch ($type) {
-            case self::R_SANDBOX_TYPE:
-                return 'R';
-            case self::PYTHON_SANDBOX_TYPE:
-                return 'py';
-        }
     }
 
     private function downloadFile(string $fileId): string
@@ -121,71 +124,23 @@ class ScriptProcessor
         return $tmpFileName;
     }
 
-    private function getCommonTemplatePath(string $type): string
+    private function getTemplateAdapter(string $type): TemplateAdapter
     {
         switch ($type) {
-            case 'r':
-                $file = 'script.R';
-                break;
             case 'python':
-                $file = 'notebook.ipynb';
+                return new PythonTemplateAdapter();
+                break;
+            case 'r':
+                return new RTemplateAdapter();
                 break;
             default:
                 throw new LogicException('Invalid template type ' . $type);
         }
-        return $templatePath = __DIR__ . '/../res/' . $file;
-    }
-
-    private function processTemplate(string $templatePath, string $type, string $script)
-    {
-        switch ($type) {
-            case 'r':
-                $template = file_get_contents($templatePath);
-                if ($script) {
-                    $template .= "\n\n" . $script;
-                } else {
-                    $this->logger->info('Script is empty.');
-                }
-                break;
-            case 'python':
-                $template = file_get_contents($templatePath);
-                $templateData = json_decode($template, false, 512, JSON_THROW_ON_ERROR);
-                if ($script) {
-                    $templateData->cells[] = [
-                        'cell_type' => 'code',
-                        'execution_count' => null,
-                        'metadata' => new \stdClass(),
-                        'outputs' => [],
-                        'source' => explode("\n", $script),
-                    ];
-                } else {
-                    $this->logger->info('Script is empty.');
-                }
-                $template = json_encode($templateData, JSON_PRETTY_PRINT + JSON_THROW_ON_ERROR);
-                break;
-            default:
-                throw new LogicException('Invalid template type ' . $type);
-        }
-        return $template;
-    }
-
-    private function getDestinationFile(string $dataDir, string $type): string
-    {
-        switch ($type) {
-            case 'r':
-                $file = 'script.R';
-                break;
-            case 'python':
-                $file = 'notebook.ipynb';
-                break;
-            default:
-                throw new LogicException('Invalid template type ' . $type);
-        }
-        return $dataDir . $file;
     }
 
     public function processScript(string $dataDir, string $type, string $script): void
     {
+        $adapter = $this->getTemplateAdapter($type);
         $id = $this->getUserTemplateId($type);
         if (!$id) {
             $id = $this->getProjectTemplateId($type);
@@ -193,9 +148,22 @@ class ScriptProcessor
         if ($id) {
             $templatePath = $this->downloadFile($id);
         } else {
-            $templatePath = $this->getCommonTemplatePath($type);
+            $this->logger->info('Found no user-defined template, using built-in.');
+            $templatePath = $adapter->getCommonTemplatePath();
         }
-        $template = $this->processTemplate($templatePath, $type, $script);
-        file_put_contents($this->getDestinationFile($dataDir, $type), $template);
+        $template = file_get_contents($templatePath);
+        if ($template === false) {
+            throw new InvalidInputException('Failed to read template from path ' . $templatePath);
+        }
+        if ($script) {
+            $template = $adapter->processTemplate($template, $script);
+        } else {
+            $this->logger->info('The script is empty.');
+        }
+        if (file_put_contents($adapter->getDestinationFile($dataDir), $template) === false) {
+            throw new InvalidInputException(
+                'Failed to save template to path ' . $adapter->getDestinationFile($dataDir)
+            );
+        }
     }
 }

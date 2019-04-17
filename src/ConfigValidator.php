@@ -22,6 +22,7 @@ class ConfigValidator
     public const INTERNAL_CLIENT_ERROR = 175;
     public const FILES_CLIENT_ERROR = 176;
     public const TABLES_CLIENT_ERROR = 177;
+    public const SCRIPT_CLIENT_ERROR = 178;
 
     /**
      * @var Client

@@ -31,7 +31,11 @@ try {
     $fs->mkdir($validator->getDataDir() . '/out/tables/');
     $fs->mkdir($validator->getDataDir() . '/out/files/');
     $scriptProcessor = new ScriptProcessor($validator->getClient(), $log);
-    $scriptProcessor->processScript($validator->getDataDir(), $validator->getType(), $validator->getScript());
+    try {
+        $scriptProcessor->processScript($validator->getDataDir(), $validator->getType(), $validator->getScript());
+    } catch (ClientException $e) {
+        throw new InvalidInputException($e->getMessage(), ConfigValidator::SCRIPT_CLIENT_ERROR, $e);
+    }
     if (!empty($validator->getInput()['files'])) {
         try {
             $reader->downloadFiles($validator->getInput()['files'], $validator->getDataDir() . '/in/files/');
