@@ -5,8 +5,8 @@ services:
 before_script:
   - docker-compose build data-loader
 script: 
-  - docker-compose run --rm -e KBC_TOKEN -e KBC_STORAGEAPI_URL data-loader /code/Tests/run.sh
-  - docker-compose run --rm -e KBC_TOKEN -e KBC_STORAGEAPI_URL data-loader /code/Tests/run-config.sh  
+#  - docker-compose run --rm -e KBC_TOKEN -e KBC_STORAGEAPI_URL data-loader /code/Tests/run.sh
+#  - docker-compose run --rm -e KBC_TOKEN -e KBC_STORAGEAPI_URL data-loader /code/Tests/run-config.sh  
 deploy:
   provider: script
   skip_cleanup: true
