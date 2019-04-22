@@ -152,7 +152,7 @@ class ScriptProcessorTest extends TestCase
                     'execution_count' => null,
                     'metadata' => [],
                     'outputs' => [],
-                    'source' => ['Achoo', 'Achordata'],
+                    'source' => ["Achoo\n", "Achordata\n"],
                 ],
             ],
             $data['cells']
@@ -197,7 +197,7 @@ class ScriptProcessorTest extends TestCase
                     'execution_count' => null,
                     'metadata' => [],
                     'outputs' => [],
-                    'source' => ['Achoo'],
+                    'source' => ["Achoo\n"],
                 ],
             ],
             $data['cells']
