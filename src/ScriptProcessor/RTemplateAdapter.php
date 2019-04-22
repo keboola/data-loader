@@ -20,11 +20,6 @@ class RTemplateAdapter implements TemplateAdapter
     public function processTemplate(string $template, string $script): string
     {
         $template = trim($template . "\n\n" . $script);
-        // RScript shouldn't be completely empty, because EOS is null in R
-        // at the same time we want to avoid extra spaces at the beginning and end
-        if (empty($template)) {
-            $template = ' ';
-        }
         return $template;
     }
 }

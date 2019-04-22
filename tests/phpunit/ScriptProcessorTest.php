@@ -60,7 +60,7 @@ class ScriptProcessorTest extends TestCase
         $processor = new ScriptProcessor($this->client, new TestLogger());
         $processor->processScript($this->temp->getTmpFolder(), 'r', ' ');
         self::assertFileExists($this->temp->getTmpFolder() . '/main.R');
-        self::assertEquals(' ', file_get_contents($this->temp->getTmpFolder() . '/main.R'));
+        self::assertEquals('', file_get_contents($this->temp->getTmpFolder() . '/main.R'));
     }
 
     public function testPythonNoScriptNoTemplate(): void
