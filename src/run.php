@@ -5,6 +5,7 @@ declare(strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
 
 use Keboola\DataLoader\ConfigValidator;
+use Keboola\DataLoader\ScriptProcessor;
 use Keboola\InputMapping\Exception\InvalidInputException;
 use Keboola\InputMapping\Reader\Options\InputTableOptionsList;
 use Keboola\InputMapping\Reader\Reader;
@@ -29,10 +30,11 @@ try {
     $fs->mkdir($validator->getDataDir() . '/in/files/');
     $fs->mkdir($validator->getDataDir() . '/out/tables/');
     $fs->mkdir($validator->getDataDir() . '/out/files/');
-    if ($validator->getScript()) {
-        file_put_contents($validator->getDataDir() . 'main.' . $validator->getExtension(), $validator->getScript());
-    } else {
-        $log->info('Script is empty.', ['runId' => $runId]);
+    $scriptProcessor = new ScriptProcessor($validator->getClient(), $log);
+    try {
+        $scriptProcessor->processScript($validator->getDataDir(), $validator->getType(), $validator->getScript());
+    } catch (ClientException $e) {
+        throw new InvalidInputException($e->getMessage(), ConfigValidator::SCRIPT_CLIENT_ERROR, $e);
     }
     if (!empty($validator->getInput()['files'])) {
         try {

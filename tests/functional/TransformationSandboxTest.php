@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\DataLoader\FunctionalTests;
 
 use Keboola\DatadirTests\DatadirTestSpecification;
+use Keboola\DataLoader\ScriptProcessor;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Options\Components\Configuration;
 use Keboola\StorageApi\Options\Components\ConfigurationRow;
@@ -22,7 +23,9 @@ class TransformationSandboxTest extends BaseDatadirTest
     public function setup(): void
     {
         parent::setup();
-        $files = $this->client->listFiles((new ListFilesOptions())->setTags(['my-file']));
+        $options = new ListFilesOptions();
+        $options->setTags(['my-file', ScriptProcessor::R_SANDBOX_TEMPLATE_TAG]);
+        $files = $this->client->listFiles($options);
         foreach ($files as $file) {
             $this->client->deleteFile($file['id']);
         }
@@ -111,6 +114,7 @@ class TransformationSandboxTest extends BaseDatadirTest
                 ' app-logger.INFO: DataLoader is loading data  ',
                 ' app-logger.INFO: Reading configuration ' . $vars['configId'] . ', row: ' . $vars['rowId'] . '  ',
                 ' app-logger.INFO: Loaded transformation script (size 43).  ',
+                ' app-logger.INFO: Found no user-defined template, using built-in.  ',
                 ' app-logger.INFO: There are no input files.  ',
                 ' app-logger.INFO: Fetched table in.c-main.source.  ',
                 ' app-logger.INFO: Fetched table in.c-main.source.  ',
@@ -174,6 +178,7 @@ class TransformationSandboxTest extends BaseDatadirTest
                 ' app-logger.INFO: DataLoader is loading data  ',
                 ' app-logger.INFO: Reading configuration ' . $vars['configId'] . ', row: ' . $vars['rowId'] . '  ',
                 ' app-logger.INFO: Loaded transformation script (size 43).  ',
+                ' app-logger.INFO: Found no user-defined template, using built-in.  ',
                 ' app-logger.INFO: There are no input files.  ',
                 ' app-logger.INFO: Fetched table in.c-main.source.  ',
                 ' app-logger.INFO: Processing 1 table exports.  ',
@@ -240,6 +245,7 @@ class TransformationSandboxTest extends BaseDatadirTest
                 ' app-logger.INFO: Reading configuration ' . $vars['configId'] . ', row: ' . $vars['rowId'] . '  ',
                 ' app-logger.INFO: Loading files with tags array (   0 => \'my-file\', )  ',
                 ' app-logger.INFO: Loaded transformation script (size 43).  ',
+                ' app-logger.INFO: Found no user-defined template, using built-in.  ',
                 ' app-logger.INFO: Fetching file dummy (' . $fileId . ').  ',
                 ' app-logger.INFO: Fetched file dummy (' . $fileId . ').  ',
                 ' app-logger.INFO: All files were fetched.  ',
@@ -319,6 +325,73 @@ class TransformationSandboxTest extends BaseDatadirTest
                 '',
             ]),
             $output
+        );
+    }
+
+    public function testScript(): void
+    {
+        $options = new FileUploadOptions();
+        $options->setTags([ScriptProcessor::R_SANDBOX_TEMPLATE_TAG]);
+        $this->client->uploadFile(__DIR__ . '/../phpunit/data/sample-project.R', $options);
+        // wait for Storage to synchronize file changes
+        sleep(1);
+        $options = new ListFilesOptions();
+        $options->setTags([ScriptProcessor::R_SANDBOX_TEMPLATE_TAG]);
+        $options->setLimit(1);
+        $file = $this->client->listFiles($options)[0];
+
+        $configuration = [
+            'backend' => 'docker',
+            'description' => 'Test configuration',
+            'type' => 'r',
+            'input' => [],
+            'output' => [],
+            'packages' => [],
+            'tags' => [],
+            'queries' => [
+                "this is some script\ncode on multiple lines",
+            ],
+        ];
+
+        $vars = $this->createConfiguration($configuration);
+        $envs = [
+            'KBC_TOKEN' => getenv('KBC_TEST_TOKEN'),
+            'KBC_STORAGEAPI_URL' => getenv('KBC_TEST_URL'),
+            'KBC_CONFIG_ID' => $vars['configId'],
+            'KBC_ROW_ID' => $vars['rowId'],
+            'KBC_CONFIG_VERSION' => '2',
+        ];
+        $specification = new DatadirTestSpecification(
+            __DIR__ . '/transformation-sandbox-script/source/data',
+            0,
+            null,
+            '',
+            __DIR__ . '/transformation-sandbox-script/expected/data/in'
+        );
+        $tempDatadir = $this->getTempDatadir($specification);
+        $process = $this->runScript($tempDatadir->getTmpFolder(), $envs);
+        $this->assertMatchesSpecification($specification, $process, $tempDatadir->getTmpFolder());
+        $output = $process->getOutput();
+        $output = preg_replace('#\[.*?\]#', '', $output);
+        $output = preg_replace('#\{.*?\}#', '', $output);
+        self::assertEquals(
+            implode("\n", [
+                ' app-logger.INFO: Starting Data Loader  ',
+                ' app-logger.INFO: DataLoader is loading data  ',
+                ' app-logger.INFO: Reading configuration ' . $vars['configId'] . ', row: ' . $vars['rowId'] . '  ',
+                ' app-logger.INFO: Loaded transformation script (size 42).  ',
+                ' app-logger.INFO: Found project template: "sample_project.r", created "' . $file['created'] .
+                    '", ID: ' . $file['id'] . '.  ',
+                ' app-logger.INFO: There are no input files.  ',
+                ' app-logger.INFO: There are no input tables.  ',
+                '',
+            ]),
+            $output
+        );
+        self::assertFileExists($tempDatadir->getTmpFolder() . '/main.R');
+        self::assertEquals(
+            "some project data\non a new line\n\n\nthis is some script\ncode on multiple lines",
+            file_get_contents($tempDatadir->getTmpFolder() . '/main.R')
         );
     }
 }

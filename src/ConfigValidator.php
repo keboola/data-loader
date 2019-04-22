@@ -22,6 +22,7 @@ class ConfigValidator
     public const INTERNAL_CLIENT_ERROR = 175;
     public const FILES_CLIENT_ERROR = 176;
     public const TABLES_CLIENT_ERROR = 177;
+    public const SCRIPT_CLIENT_ERROR = 178;
 
     /**
      * @var Client
@@ -222,13 +223,8 @@ class ConfigValidator
         return $this->script;
     }
 
-    public function getExtension(): string
+    public function getType(): string
     {
-        switch ($this->type) {
-            case 'r':
-                return 'R';
-            case 'python':
-                return 'py';
-        }
+        return $this->type;
     }
 }

@@ -58,7 +58,7 @@ class ConfigValidatorTest extends TestCase
 
         self::assertEquals('', $validator->getScript());
         self::assertEquals('/data/', $validator->getDataDir());
-        self::assertEquals('R', $validator->getExtension());
+        self::assertEquals('r', $validator->getType());
         self::assertEquals(['tables' => []], $validator->getInput());
         self::assertNotEmpty($validator->getRunId());
         self::assertNotEmpty($validator->getClient());
@@ -113,7 +113,7 @@ class ConfigValidatorTest extends TestCase
 
         self::assertEquals("this is some script\ncode on multiple lines", $validator->getScript());
         self::assertEquals('/data/', $validator->getDataDir());
-        self::assertEquals('py', $validator->getExtension());
+        self::assertEquals('python', $validator->getType());
         self::assertEquals(
             [
                 'tables' => [
@@ -409,7 +409,7 @@ class ConfigValidatorTest extends TestCase
         $validator->validate($logger);
     }
 
-    public function testValidatePlainSandboxExtension(): void
+    public function testValidatePlainSandboxType(): void
     {
         $configuration = ['storage' => ['input' => []]];
         putenv('KBC_EXPORT_CONFIG=' . json_encode($configuration));
@@ -417,6 +417,6 @@ class ConfigValidatorTest extends TestCase
         $validator = new ConfigValidator();
         $validator->validate($logger);
 
-        self::assertEquals('py', $validator->getExtension());
+        self::assertEquals('python', $validator->getType());
     }
 }
