@@ -38,6 +38,7 @@ class ExportConfigTest extends TestCase
                     ],
                     'parameters' => [
                         'type' => 'python',
+                        'script' => [],
                     ],
                 ],
             ],
@@ -62,6 +63,11 @@ class ExportConfigTest extends TestCase
                                     'tags' => ['test'],
                                 ],
                             ],
+                        ],
+                    ],
+                    'parameters' => [
+                        'script' => [
+                            'abc',
                         ],
                     ],
                 ],
@@ -91,6 +97,7 @@ class ExportConfigTest extends TestCase
                     ],
                     'parameters' => [
                         'type' => 'python',
+                        'script' => ['abc'],
                     ],
                 ],
             ],

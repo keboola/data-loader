@@ -21,6 +21,11 @@ class PlainSandboxTest extends BaseDatadirTest
                     ],
                 ],
             ],
+            'parameters' => [
+                'script' => [
+                    'abc'
+                ]
+            ]
         ];
         $envs = [
             'KBC_EXPORT_CONFIG' => json_encode($configuration),
