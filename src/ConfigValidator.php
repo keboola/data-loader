@@ -111,6 +111,7 @@ class ConfigValidator
         }
         $this->input = $configData['storage']['input'];
         $this->type = $configData['parameters']['type'];
+        $this->script = implode("\n", $configData['parameters']['script']);
     }
 
     private function validateConfig(): void

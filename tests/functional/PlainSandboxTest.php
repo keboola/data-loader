@@ -23,9 +23,9 @@ class PlainSandboxTest extends BaseDatadirTest
             ],
             'parameters' => [
                 'script' => [
-                    'abc'
-                ]
-            ]
+                    'abc',
+                ],
+            ],
         ];
         $envs = [
             'KBC_EXPORT_CONFIG' => json_encode($configuration),
@@ -51,7 +51,6 @@ class PlainSandboxTest extends BaseDatadirTest
                 ' app-logger.INFO: DataLoader is loading data  ',
                 ' app-logger.INFO: Loading configuration from EXPORT_CONFIG  ',
                 ' app-logger.INFO: Found no user-defined template, using built-in.  ',
-                ' app-logger.INFO: The script is empty.  ',
                 ' app-logger.INFO: There are no input files.  ',
                 ' app-logger.INFO: Fetched table in.c-main.source.  ',
                 ' app-logger.INFO: Processing 1 table exports.  ',
@@ -60,6 +59,10 @@ class PlainSandboxTest extends BaseDatadirTest
             ]),
             $output
         );
+        $scriptFile = $tempDatadir->getTmpFolder() . '/notebook.ipynb';
+        self::assertFileExists($scriptFile);
+        $script = json_decode(file_get_contents($scriptFile), true);
+        self::assertEquals(["abc\n"], $script['cells'][0]['source']);
     }
 
     public function testFiltered(): void
