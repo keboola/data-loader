@@ -23,8 +23,8 @@ class ExportConfig implements ConfigurationInterface
                         // in future, this should be required, but for bwd compatibility is is not yet
                         ->defaultValue('python')
                         ->validate()
-                            ->ifNotInArray(['r', 'python'])
-                            ->thenInvalid('Invalid sandbox type: %s. Valid values are: "r", "python".')
+                            ->ifNotInArray(['r', 'python', 'julia'])
+                            ->thenInvalid('Invalid sandbox type: %s. Valid values are: "r", "python", "julia".')
                         ->end()
                     ->end()
                     ->arrayNode('script')

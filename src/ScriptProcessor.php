@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\DataLoader;
 
 use Aws\S3\S3Client;
+use Keboola\DataLoader\ScriptProcessor\JuliaTemplateAdapter;
 use Keboola\DataLoader\ScriptProcessor\PythonTemplateAdapter;
 use Keboola\DataLoader\ScriptProcessor\RTemplateAdapter;
 use Keboola\DataLoader\ScriptProcessor\TemplateAdapter;
@@ -132,6 +133,9 @@ class ScriptProcessor
                 break;
             case 'r':
                 return new RTemplateAdapter();
+                break;
+            case 'julia':
+                return new JuliaTemplateAdapter();
                 break;
             default:
                 throw new LogicException('Invalid template type ' . $type);

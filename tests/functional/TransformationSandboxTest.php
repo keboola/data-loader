@@ -57,7 +57,7 @@ class TransformationSandboxTest extends BaseDatadirTest
         $configuration = [
             'backend' => 'docker',
             'description' => 'Test configuration',
-            'type' => 'r',
+            'type' => 'julia',
             'input' => [
                 [
                     'source' => 'in.c-main.source',
