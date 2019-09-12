@@ -18,8 +18,10 @@ use Psr\Log\LoggerInterface;
 
 class ScriptProcessor
 {
+    public const JULIA_SANDBOX_TEMPLATE_TAG = '_julia_sandbox_template_';
     public const PYTHON_SANDBOX_TEMPLATE_TAG = '_python_sandbox_template_';
     public const R_SANDBOX_TEMPLATE_TAG = '_r_sandbox_template_';
+    public const JULIA_SANDBOX_TYPE = 'julia';
     public const PYTHON_SANDBOX_TYPE = 'python';
     public const R_SANDBOX_TYPE = 'r';
 
@@ -36,6 +38,7 @@ class ScriptProcessor
     public static function getSandboxTags(): array
     {
         return [
+            self::JULIA_SANDBOX_TYPE => self::JULIA_SANDBOX_TEMPLATE_TAG,
             self::PYTHON_SANDBOX_TYPE => self::PYTHON_SANDBOX_TEMPLATE_TAG,
             self::R_SANDBOX_TYPE => self::R_SANDBOX_TEMPLATE_TAG,
         ];
