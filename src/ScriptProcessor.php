@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\DataLoader;
 
 use Aws\S3\S3Client;
+use Keboola\DataLoader\ScriptProcessor\JuliaTemplateAdapter;
 use Keboola\DataLoader\ScriptProcessor\PythonTemplateAdapter;
 use Keboola\DataLoader\ScriptProcessor\RTemplateAdapter;
 use Keboola\DataLoader\ScriptProcessor\TemplateAdapter;
@@ -17,8 +18,10 @@ use Psr\Log\LoggerInterface;
 
 class ScriptProcessor
 {
+    public const JULIA_SANDBOX_TEMPLATE_TAG = '_julia_sandbox_template_';
     public const PYTHON_SANDBOX_TEMPLATE_TAG = '_python_sandbox_template_';
     public const R_SANDBOX_TEMPLATE_TAG = '_r_sandbox_template_';
+    public const JULIA_SANDBOX_TYPE = 'julia';
     public const PYTHON_SANDBOX_TYPE = 'python';
     public const R_SANDBOX_TYPE = 'r';
 
@@ -35,6 +38,7 @@ class ScriptProcessor
     public static function getSandboxTags(): array
     {
         return [
+            self::JULIA_SANDBOX_TYPE => self::JULIA_SANDBOX_TEMPLATE_TAG,
             self::PYTHON_SANDBOX_TYPE => self::PYTHON_SANDBOX_TEMPLATE_TAG,
             self::R_SANDBOX_TYPE => self::R_SANDBOX_TEMPLATE_TAG,
         ];
@@ -132,6 +136,9 @@ class ScriptProcessor
                 break;
             case 'r':
                 return new RTemplateAdapter();
+                break;
+            case 'julia':
+                return new JuliaTemplateAdapter();
                 break;
             default:
                 throw new LogicException('Invalid template type ' . $type);
