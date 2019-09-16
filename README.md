@@ -39,5 +39,5 @@ docker-compose run --rm dev composer install
 ```
 export KBC_TEST_TOKEN=
 export KBC_TEST_URL=https://connection.keboola.com
-docker-compose run --rm -e KBC_TOKEN -e KBC_TEST_URL dev composer ci
+docker-compose run --rm -e KBC_TEST_TOKEN -e KBC_TEST_URL dev composer ci
 ```
