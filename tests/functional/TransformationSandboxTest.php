@@ -227,7 +227,7 @@ class TransformationSandboxTest extends BaseDatadirTest
             '',
             __DIR__ . '/transformation-sandbox-files/expected/data/in'
         );
-        $targetFile = __DIR__ . '/transformation-sandbox-files/expected/data/in/files/' . $fileId . '_dummy';
+        $targetFile = '/tmp/' . $fileId . '_dummy';
         file_put_contents(
             $targetFile,
             'content'
