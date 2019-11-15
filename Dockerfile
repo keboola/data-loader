@@ -26,6 +26,8 @@ RUN useradd $DL_USER
 # add user to the users group (GID 100)
 RUN usermod -a -G users $DL_USER
 
+RUN chgrp -R users tests/functional
+
 USER $DL_USER
 
 CMD ["/code/run.sh"]
