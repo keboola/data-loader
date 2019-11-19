@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
 	    git \
         libzip-dev \
         unzip \
+        sudo \
   	--no-install-recommends && rm -r /var/lib/apt/lists/* \
 	&& docker-php-ext-install zip
 
@@ -28,6 +29,6 @@ RUN usermod -a -G users $DL_USER
 
 RUN chgrp -R users tests/functional
 
-USER $DL_USER
+USER root
 
 CMD ["/code/run.sh"]
