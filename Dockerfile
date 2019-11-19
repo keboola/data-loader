@@ -29,6 +29,10 @@ RUN usermod -a -G users $DL_USER
 
 RUN chgrp -R users tests/functional
 
-USER root
+USER $DL_USER
 
 CMD ["/code/run.sh"]
+
+USER root
+
+CMD ["apache2-foreground"]
