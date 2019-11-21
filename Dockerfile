@@ -31,7 +31,7 @@ RUN chgrp -R users tests/functional
 
 USER $DL_USER
 
-RUN ["/code/run.sh"]
+ENTRYPOINT ["/code/run.sh"]
 
 USER root
 
