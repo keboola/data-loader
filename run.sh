@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-echo "executing run php"
-php /code/src/run.php
-echo "run php finished"
+sudo -u $DL_USER --preserve-env php /code/src/run.php
+
+apache2-foreground
