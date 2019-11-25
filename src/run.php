@@ -62,6 +62,8 @@ try {
     } else {
         $log->info('There are no input tables.', ['runId' => $runId]);
     }
+    // make sure everything that was created has global permissions
+    $fs->chmod($validator->getDataDir(), 0777, 0000, true);
 } catch (InvalidInputException $e) {
     $log->error($e->getMessage(), ['exception' => $e, 'runId' => isset($runId) ? $runId : 'N/A']);
     if ($e->getCode()) {

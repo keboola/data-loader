@@ -20,14 +20,16 @@ RUN composer install $COMPOSER_FLAGS --no-scripts --no-autoloader
 COPY . .
 RUN composer install $COMPOSER_FLAGS
 
-ARG DL_USER=dl-user
+ENV DL_USER=dl-user
 
 RUN useradd $DL_USER
 # add user to the users group (GID 100)
 RUN usermod -a -G users $DL_USER
+RUN mkdir /home/$DL_USER
+RUN chown $DL_USER /home/$DL_USER
 
 RUN chgrp -R users tests/functional
 
-USER $DL_USER
+USER root
 
 CMD ["/code/run.sh"]
