@@ -89,7 +89,6 @@ class ExportConfigTest extends TestCase
                             'files' => [
                                 [
                                     'tags' => ['test'],
-                                    'limit' => 10,
                                     'processed_tags' => [],
                                 ],
                             ],
