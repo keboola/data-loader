@@ -218,7 +218,6 @@ class ConfigValidatorTest extends TestCase
                 'files' => [
                     [
                         'tags' => ['my-file'],
-                        'limit' => 10,
                         'processed_tags' => [],
                     ],
                 ],
