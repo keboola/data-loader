@@ -215,7 +215,8 @@ class PlainSandboxTest extends BaseDatadirTest
                 ' app-logger.INFO: Loading configuration from EXPORT_CONFIG  ',
                 ' app-logger.ERROR: Configuration is invalid: Unrecognized option "invalid" under ' .
                     '"configuration.storage.input.tables.0". Available options are "changed_since", "columns", ' .
-                    '"days", "destination", "limit", "source", "where_column", "where_operator", "where_values".  ',
+                    '"days", "destination", "limit", "source", "source_search", "where_column", ' .
+                    '"where_operator", "where_values".  ',
                 '',
             ]),
             $output
