@@ -6,6 +6,7 @@ before_script:
   - docker-compose build data-loader
 script: 
   - docker-compose run --rm -e KBC_TEST_TOKEN -e KBC_TEST_URL data-loader composer ci
+  - docker-compose run --rm -e KBC_TEST_TOKEN=$KBC_TEST_TOKEN_ABS -e KBC_TEST_URL data-loader composer tests
 deploy:
   provider: script
   skip_cleanup: true
