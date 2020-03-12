@@ -35,9 +35,13 @@ docker-compose run --rm dev composer install
 ```
 
 ### Tests
-
+Create `.env` file:
 ```
-export KBC_TEST_TOKEN=
-export KBC_TEST_URL=https://connection.keboola.com
-docker-compose run --rm -e KBC_TEST_TOKEN -e KBC_TEST_URL dev composer ci
+KBC_TEST_URL=https://connection.keboola.com/
+KBC_TEST_TOKEN=
+```
+
+Run tests:
+```
+docker-compose run --rm dev composer ci
 ```
