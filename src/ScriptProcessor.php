@@ -100,31 +100,8 @@ class ScriptProcessor
 
     private function downloadFile(string $fileId): string
     {
-        $options = new GetFileOptions();
-        $options->setFederationToken(true);
-        $fileInfo = $this->client->getFile($fileId, $options);
-
-        // Initialize S3Client with credentials from Storage API
-        $s3Client = new S3Client([
-            'version' => '2006-03-01',
-            'region' => $fileInfo['region'],
-            'retries' => $this->client->getAwsRetries(),
-            'credentials' => [
-                'key' => $fileInfo['credentials']['AccessKeyId'],
-                'secret' => $fileInfo['credentials']['SecretAccessKey'],
-                'token' => $fileInfo['credentials']['SessionToken'],
-            ],
-            'http' => [
-                'decode_content' => false,
-            ],
-        ]);
-
         $tmpFileName = sys_get_temp_dir() . '/' . uniqid('data-loader');
-        $s3Client->getObject(array(
-            'Bucket' => $fileInfo['s3Path']['bucket'],
-            'Key' => $fileInfo['s3Path']['key'],
-            'SaveAs' => $tmpFileName,
-        ));
+        $this->client->downloadFile($fileId, $tmpFileName);
         return $tmpFileName;
     }
 
