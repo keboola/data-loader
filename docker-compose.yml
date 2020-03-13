@@ -13,3 +13,6 @@ services:
     tty: true
     stdin_open: true
     command: bash
+    environment:
+      - KBC_TEST_URL
+      - KBC_TEST_TOKEN
