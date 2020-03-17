@@ -3,4 +3,6 @@ set -e
 
 php /code/src/run.php
 
-apache2-foreground
+if [ "$SKIP_WAIT_FOR_IT" = "" ]; then
+    apache2-foreground
+fi
