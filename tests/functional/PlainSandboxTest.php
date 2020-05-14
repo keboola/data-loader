@@ -66,6 +66,65 @@ class PlainSandboxTest extends BaseDatadirTest
         self::assertEquals('python', $script['metadata']['kernelspec']['language']);
     }
 
+    public function testBasicTest(): void
+    {
+        $configuration = [
+            'storage' => [
+                'input' => [
+                    'tables' => [
+                        [
+                            'source' => 'in.c-main.source',
+                            'destination' => 'destination.csv',
+                        ],
+                    ],
+                ],
+            ],
+            'parameters' => [
+                'script' => [
+                    'abc',
+                ],
+                'type' => 'test',
+            ],
+        ];
+        $envs = [
+            'KBC_EXPORT_CONFIG' => json_encode($configuration),
+            'KBC_TOKEN' => getenv('KBC_TEST_TOKEN'),
+            'KBC_STORAGEAPI_URL' => getenv('KBC_TEST_URL'),
+        ];
+        $specification = new DatadirTestSpecification(
+            __DIR__ . '/plain-sandbox/source/data',
+            0,
+            null,
+            '',
+            __DIR__ . '/plain-sandbox/expected/data/in'
+        );
+        $tempDatadir = $this->getTempDatadir($specification);
+        $process = $this->runScript($tempDatadir->getTmpFolder(), $envs);
+        $this->assertMatchesSpecification($specification, $process, $tempDatadir->getTmpFolder());
+        $output = $process->getOutput();
+        $output = preg_replace('#\[.*?\]#', '', $output);
+        $output = preg_replace('#\{.*?\}#', '', $output);
+        self::assertEquals(
+            implode("\n", [
+                ' app-logger.INFO: Starting Data Loader  ',
+                ' app-logger.INFO: DataLoader is loading data  ',
+                ' app-logger.INFO: Loading configuration from EXPORT_CONFIG  ',
+                ' app-logger.INFO: Found no user-defined template, using built-in.  ',
+                ' app-logger.INFO: There are no input files.  ',
+                ' app-logger.INFO: Fetched table in.c-main.source.  ',
+                ' app-logger.INFO: Processing 1 local table exports.  ',
+                ' app-logger.INFO: All tables were fetched.  ',
+                '',
+            ]),
+            $output
+        );
+        $scriptFile = $tempDatadir->getTmpFolder() . '/notebook.ipynb';
+        self::assertFileExists($scriptFile);
+        $script = json_decode(file_get_contents($scriptFile), true);
+        self::assertEquals(["abc\n"], $script['cells'][0]['source']);
+        self::assertEquals('python', $script['metadata']['kernelspec']['language']);
+    }
+
     public function testBasicJulia(): void
     {
         $configuration = [
