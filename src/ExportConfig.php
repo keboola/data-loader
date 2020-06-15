@@ -18,6 +18,7 @@ class ExportConfig implements ConfigurationInterface
         $definition = $root->children()
             ->arrayNode('parameters')
                 ->addDefaultsIfNotSet()
+                ->ignoreExtraKeys(true)
                 ->children()
                     ->scalarNode('type')
                         // in future, this should be required, but for bwd compatibility is is not yet
