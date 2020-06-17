@@ -146,7 +146,10 @@ class ConfigValidator
         }
         $processor = new Processor();
         try {
-            $configData = $processor->processConfiguration(new TransformationV2Config(), ['configuration' => $configData]);
+            $configData = $processor->processConfiguration(
+                new TransformationV2Config(),
+                ['configuration' => $configData]
+            );
         } catch (InvalidConfigurationException $e) {
             throw new InvalidInputException(
                 'Configuration is invalid: ' . $e->getMessage(),
@@ -247,11 +250,11 @@ class ConfigValidator
         if (empty(getenv('KBC_CONFIG_ID'))) { // for fwd compat
             $this->validateExportConfig();
         }
-        if (empty(getenv('KBC_EXPORT_CONFIG'))) { // for bwd compat
+        if (empty(getenv('KBC_EXPORT_CONFIG')) && !empty(getenv('KBC_ROW_ID'))) { // for bwd compat
             $this->validateLegacyTransformationConfig();
         }
         if (!empty(getenv('KBC_COMPONENT_ID')) && !empty(getenv('KBC_CONFIG_ID'))) {
-            $this->validateTransformationConfig();
+            $this->validateTransformationV2Config();
         }
     }
 

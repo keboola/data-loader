@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Keboola\DataLoader\ScriptProcessor;
-
 
 class BlockStyleTemplateAdapter
 {
