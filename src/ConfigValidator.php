@@ -50,6 +50,11 @@ class ConfigValidator
     private $script = '';
 
     /**
+     * @var array
+     */
+    private $codeChunks = [];
+
+    /**
      * @var string
      */
     private $type;
@@ -114,7 +119,55 @@ class ConfigValidator
         $this->script = implode("\n", $configData['parameters']['script']);
     }
 
-    private function validateConfig(): void
+    private function validateTransformationV2Config(): void
+    {
+        $configId = getenv('KBC_CONFIG_ID');
+        $componentId = getenv('KBC_COMPONENT_ID');
+        $versionId = getenv('KBC_CONFIG_VERSION');
+        $this->logger->info('Reading ' . $componentId . ' configuration ' . $configId);
+        if (empty($configId) || empty($componentId) || empty($versionId)) {
+            throw new InvalidInputException(
+                'Environment KBC_COMPONENT_ID or KBC_CONFIGURATION_ID or KBC_CONFIG_VERSION is empty',
+                self::INTERNAL_ERROR
+            );
+        }
+        $component = new Components($this->client);
+        try {
+            $configData = $component->getConfigurationVersion($componentId, $configId, $versionId);
+            var_dump($configData);
+        } catch (ClientException $e) {
+            throw new InvalidInputException(
+                'Failed to get ' . $componentId . ' configuration: ' . $e->getMessage(),
+                self::CONFIGURATION_INVALID
+            );
+        }
+        if (empty($configData)) {
+            throw new InvalidInputException('Configuration Row not found.', self::CONFIGURATION_INVALID);
+        }
+        $processor = new Processor();
+        try {
+            $configData = $processor->processConfiguration(new TransformationV2Config(), ['configuration' => $configData]);
+        } catch (InvalidConfigurationException $e) {
+            throw new InvalidInputException(
+                'Configuration is invalid: ' . $e->getMessage(),
+                self::CONFIGURATION_INVALID
+            );
+        }
+        $this->input = $configData['storage']['input'];
+        $this->type = $configData['parameters']['type'];
+        $this->codeChunks = [];
+        $scriptLength = 0;
+        foreach ($configData['parameters']['blocks'] as $block) {
+            foreach ($block['codes'] as $codeChunk) {
+                $this->codeChunks[] = $codeChunk;
+                $scriptLength += strlen($codeChunk);
+            }
+        }
+        $this->input = $configData['storage']['input'];
+        $this->logger->info(sprintf('Loaded transformation script (size %s).', $scriptLength));
+    }
+
+    private function validateLegacyTransformationConfig(): void
     {
         $configId = getenv('KBC_CONFIG_ID');
         $versionId = getenv('KBC_CONFIG_VERSION');
@@ -195,7 +248,10 @@ class ConfigValidator
             $this->validateExportConfig();
         }
         if (empty(getenv('KBC_EXPORT_CONFIG'))) { // for bwd compat
-            $this->validateConfig();
+            $this->validateLegacyTransformationConfig();
+        }
+        if (!empty(getenv('KBC_COMPONENT_ID')) && !empty(getenv('KBC_CONFIG_ID'))) {
+            $this->validateTransformationConfig();
         }
     }
 

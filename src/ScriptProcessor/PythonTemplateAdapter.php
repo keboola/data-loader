@@ -10,7 +10,7 @@ class PythonTemplateAdapter implements TemplateAdapter
 {
     public function getCommonTemplatePath(): string
     {
-        return $templatePath = __DIR__ . '/../../res/notebook.ipynb';
+        return $templatePath = __DIR__ . '/../../res/notebook-python.ipynb';
     }
 
     public function getDestinationFile(string $dataDir): string
