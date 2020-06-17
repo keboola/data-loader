@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Keboola\DataLoader\ScriptProcessor;
 
+use stdClass;
+
 class BlockStyleTemplateAdapter
 {
     public function getCommonTemplatePath(string $sandboxType): string

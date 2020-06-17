@@ -127,7 +127,7 @@ class ScriptProcessor
         }
     }
 
-    public function processScript(string $dataDir, string $type, string $script, ?array $codeChunks = null): void
+    public function processScript(string $dataDir, string $type, ?string $script, ?array $codeChunks = null): void
     {
         if ($codeChunks) {
             /** @var BlockStyleTemplateAdapter $adapter */
@@ -153,7 +153,7 @@ class ScriptProcessor
             throw new InvalidInputException('Failed to read template from path ' . $templatePath);
         }
         if ($codeChunks) {
-            $adapter->processTemplate($template, $codeChunks);
+            $template = $adapter->processTemplate($template, $codeChunks);
         } elseif ($script) {
             $template = $adapter->processTemplate($template, $script);
         } else {
