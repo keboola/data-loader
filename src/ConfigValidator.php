@@ -250,7 +250,7 @@ class ConfigValidator
         if (empty(getenv('KBC_CONFIG_ID'))) { // for fwd compat
             $this->validateExportConfig();
         }
-        if (empty(getenv('KBC_EXPORT_CONFIG')) && !empty(getenv('KBC_ROW_ID'))) { // for bwd compat
+        if (empty(getenv('KBC_EXPORT_CONFIG')) && empty(getenv('KBC_COMPONENT_ID'))) { // for bwd compat
             $this->validateLegacyTransformationConfig();
         }
         if (!empty(getenv('KBC_COMPONENT_ID')) && !empty(getenv('KBC_CONFIG_ID'))) {
