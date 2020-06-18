@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\DataLoader;
 
 use Aws\S3\S3Client;
+use Keboola\DataLoader\ScriptProcessor\BlockStyleTemplateAdapter;
 use Keboola\DataLoader\ScriptProcessor\JuliaTemplateAdapter;
 use Keboola\DataLoader\ScriptProcessor\PythonTemplateAdapter;
 use Keboola\DataLoader\ScriptProcessor\RTemplateAdapter;
@@ -126,9 +127,15 @@ class ScriptProcessor
         }
     }
 
-    public function processScript(string $dataDir, string $type, string $script): void
+    public function processScript(string $dataDir, string $type, ?string $script, ?array $codeChunks = null): void
     {
         $adapter = $this->getTemplateAdapter($type);
+        $chunkAdapter = new BlockStyleTemplateAdapter();
+        if ($codeChunks) {
+            $commonTemplatePath = $chunkAdapter->getCommonTemplatePath($type);
+        } else {
+            $commonTemplatePath = $adapter->getCommonTemplatePath();
+        }
         $id = $this->getUserTemplateId($type);
         if (!$id) {
             $id = $this->getProjectTemplateId($type);
@@ -137,13 +144,15 @@ class ScriptProcessor
             $templatePath = $this->downloadFile($id);
         } else {
             $this->logger->info('Found no user-defined template, using built-in.');
-            $templatePath = $adapter->getCommonTemplatePath();
+            $templatePath = $commonTemplatePath;
         }
         $template = file_get_contents($templatePath);
         if ($template === false) {
             throw new InvalidInputException('Failed to read template from path ' . $templatePath);
         }
-        if ($script) {
+        if ($codeChunks) {
+            $template = $chunkAdapter->processTemplate($template, $codeChunks);
+        } elseif ($script) {
             $template = $adapter->processTemplate($template, $script);
         } else {
             $this->logger->info('The script is empty.');

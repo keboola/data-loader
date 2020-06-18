@@ -214,6 +214,134 @@ class ScriptProcessorTest extends TestCase
         );
     }
 
+    public function testChunkedPythonScriptNoTemplate(): void
+    {
+        $dir = $this->temp->getTmpFolder() . '/';
+        $processor = new ScriptProcessor($this->client, new TestLogger());
+        $processor->processScript($dir, 'python', null,  ["the first chunk\nwith a second line", 'the second chunk']);
+        self::assertFileExists($dir . 'notebook.ipynb');
+        $data = json_decode(file_get_contents($dir . 'notebook.ipynb'), true, 512, JSON_THROW_ON_ERROR);
+        self::assertEquals(
+            [
+                [
+                    'cell_type' => 'code',
+                    'execution_count' => null,
+                    'metadata' => [],
+                    'outputs' => [],
+                    'source' => ["the first chunk\n", "with a second line\n"],
+                ],
+                [
+                    'cell_type' => 'code',
+                    'execution_count' => null,
+                    'metadata' => [],
+                    'outputs' => [],
+                    'source' => ["the second chunk\n"],
+                ],
+            ],
+            $data['cells']
+        );
+    }
+
+    public function testChunkedPythonScriptProjectTemplate(): void
+    {
+        $options = new FileUploadOptions();
+        $options->setTags([ScriptProcessor::PYTHON_SANDBOX_TEMPLATE_TAG]);
+        $this->client->uploadFile(__DIR__ . '/data/sample-notebook-project.ipynb', $options);
+        // wait for Storage to synchronize file changes
+        sleep(1);
+
+        $dir = $this->temp->getTmpFolder() . '/';
+        $processor = new ScriptProcessor($this->client, new TestLogger());
+        $processor->processScript($dir, 'python', null,  ["the first chunk\nwith a second line", 'the second chunk']);
+        self::assertFileExists($dir . 'notebook.ipynb');
+        $data = json_decode(file_get_contents($dir . 'notebook.ipynb'), true, 512, JSON_THROW_ON_ERROR);
+        self::assertEquals(
+            [
+                [
+                    'cell_type' => 'code',
+                    'execution_count' => null,
+                    'metadata' => [],
+                    'outputs' => [],
+                    'source' => ['this is the first cell for project', 'on a new line'],
+                ],
+                [
+                    'cell_type' => 'code',
+                    'execution_count' => null,
+                    'metadata' => [],
+                    'outputs' => [],
+                    'source' => ['this is the second cell'],
+                ],
+                [
+                    'cell_type' => 'code',
+                    'execution_count' => null,
+                    'metadata' => [],
+                    'outputs' => [],
+                    'source' => ["the first chunk\n", "with a second line\n"],
+                ],
+                [
+                    'cell_type' => 'code',
+                    'execution_count' => null,
+                    'metadata' => [],
+                    'outputs' => [],
+                    'source' => ["the second chunk\n"],
+                ],
+            ],
+            $data['cells']
+        );
+    }
+
+    public function testChunkedPythonScriptUserTemplate(): void
+    {
+        $tokenInfo = $this->client->verifyToken();
+        $options = new FileUploadOptions();
+        $options->setTags([ScriptProcessor::PYTHON_SANDBOX_TEMPLATE_TAG, $tokenInfo['description']]);
+        $this->client->uploadFile(__DIR__ . '/data/sample-notebook-user.ipynb', $options);
+        $options = new FileUploadOptions();
+        $options->setTags([ScriptProcessor::PYTHON_SANDBOX_TEMPLATE_TAG]);
+        $this->client->uploadFile(__DIR__ . '/data/sample-notebook-project.ipynb', $options);
+        // wait for Storage to synchronize file changes
+        sleep(1);
+
+        $dir = $this->temp->getTmpFolder() . '/';
+        $processor = new ScriptProcessor($this->client, new TestLogger());
+        $processor->processScript($dir, 'python', null,  ["the first chunk\nwith a second line", 'the second chunk']);
+        self::assertFileExists($dir . 'notebook.ipynb');
+        $data = json_decode(file_get_contents($dir . 'notebook.ipynb'), true, 512, JSON_THROW_ON_ERROR);
+        self::assertEquals(
+            [
+                [
+                    'cell_type' => 'code',
+                    'execution_count' => null,
+                    'metadata' => [],
+                    'outputs' => [],
+                    'source' => ['this is the first cell for user'],
+                ],
+                [
+                    'cell_type' => 'code',
+                    'execution_count' => null,
+                    'metadata' => [],
+                    'outputs' => [],
+                    'source' => ['this is the second cell'],
+                ],
+                [
+                    'cell_type' => 'code',
+                    'execution_count' => null,
+                    'metadata' => [],
+                    'outputs' => [],
+                    'source' => ["the first chunk\n", "with a second line\n"],
+                ],
+                [
+                    'cell_type' => 'code',
+                    'execution_count' => null,
+                    'metadata' => [],
+                    'outputs' => [],
+                    'source' => ["the second chunk\n"],
+                ],
+            ],
+            $data['cells']
+        );
+    }
+
     public function testRScriptProjectTemplate(): void
     {
         $options = new FileUploadOptions();

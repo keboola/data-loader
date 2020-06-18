@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Keboola\DataLoader\ScriptProcessor;
+
+use stdClass;
+
+class BlockStyleTemplateAdapter
+{
+    public function getCommonTemplatePath(string $sandboxType): string
+    {
+        return $templatePath = __DIR__ . '/../../res/notebook-' . $sandboxType . '.ipynb';
+    }
+
+    public function getDestinationFile(string $dataDir): string
+    {
+        // this name must match the one expected in https://github.com/keboola/docker-jupyter
+        return $dataDir . '/notebook.ipynb';
+    }
+
+    public function processTemplate(string $template, array $codeChunks): string
+    {
+        $templateData = json_decode($template, false, 512, JSON_THROW_ON_ERROR);
+        // the ipynb cells are saved as lines, but they still have to contain EOL
+        foreach ($codeChunks as $script) {
+            $lines = explode("\n", $script);
+            array_walk($lines, function (&$line): void {
+                $line .= "\n";
+            });
+            $templateData->cells[] = [
+                'cell_type' => 'code',
+                'execution_count' => null,
+                'metadata' => new stdClass(),
+                'outputs' => [],
+                'source' => $lines,
+            ];
+        }
+        $template = json_encode($templateData, JSON_PRETTY_PRINT + JSON_THROW_ON_ERROR);
+        return $template;
+    }
+}
