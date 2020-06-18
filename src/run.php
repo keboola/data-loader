@@ -32,7 +32,12 @@ try {
     $fs->mkdir($validator->getDataDir() . '/out/files/');
     $scriptProcessor = new ScriptProcessor($validator->getClient(), $log);
     try {
-        $scriptProcessor->processScript($validator->getDataDir(), $validator->getType(), $validator->getScript());
+        $scriptProcessor->processScript(
+            $validator->getDataDir(),
+            $validator->getType(),
+            $validator->getScript(),
+            $validator->getCodeChunks()
+        );
     } catch (ClientException $e) {
         throw new InvalidInputException($e->getMessage(), ConfigValidator::SCRIPT_CLIENT_ERROR, $e);
     }

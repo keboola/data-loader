@@ -283,6 +283,11 @@ class ConfigValidator
         return $this->script;
     }
 
+    public function getCodeChunks(): array
+    {
+        return $this->codeChunks;
+    }
+
     public function getType(): string
     {
         return $this->type;
