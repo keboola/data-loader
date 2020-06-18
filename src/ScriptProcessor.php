@@ -129,13 +129,11 @@ class ScriptProcessor
 
     public function processScript(string $dataDir, string $type, ?string $script, ?array $codeChunks = null): void
     {
+        $adapter = $this->getTemplateAdapter($type);
+        $chunkAdapter = new BlockStyleTemplateAdapter();
         if ($codeChunks) {
-            /** @var BlockStyleTemplateAdapter $chunkAdapter */
-            $chunkAdapter = new BlockStyleTemplateAdapter();
             $commonTemplatePath = $chunkAdapter->getCommonTemplatePath($type);
         } else {
-            /** @var TemplateAdapter $adapter */
-            $adapter = $this->getTemplateAdapter($type);
             $commonTemplatePath = $adapter->getCommonTemplatePath();
         }
         $id = $this->getUserTemplateId($type);
