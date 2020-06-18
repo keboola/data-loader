@@ -304,7 +304,7 @@ class ScriptProcessorTest extends TestCase
 
         $dir = $this->temp->getTmpFolder() . '/';
         $processor = new ScriptProcessor($this->client, new TestLogger());
-        $processor->processScript($dir, 'python', null,  ["the first chunkwith\nwith a second line", 'the second chunk']);
+        $processor->processScript($dir, 'python', null,  ["the first chunk\nwith a second line", 'the second chunk']);
         self::assertFileExists($dir . 'notebook.ipynb');
         $data = json_decode(file_get_contents($dir . 'notebook.ipynb'), true, 512, JSON_THROW_ON_ERROR);
         self::assertEquals(
