@@ -130,9 +130,9 @@ class ScriptProcessor
     public function processScript(string $dataDir, string $type, ?string $script, ?array $codeChunks = null): void
     {
         if ($codeChunks) {
-            /** @var BlockStyleTemplateAdapter $adapter */
-            $adapter = new BlockStyleTemplateAdapter();
-            $commonTemplatePath = $adapter->getCommonTemplatePath($type);
+            /** @var BlockStyleTemplateAdapter $chunkAdapter */
+            $chunkAdapter = new BlockStyleTemplateAdapter();
+            $commonTemplatePath = $chunkAdapter->getCommonTemplatePath($type);
         } else {
             /** @var TemplateAdapter $adapter */
             $adapter = $this->getTemplateAdapter($type);
@@ -153,7 +153,7 @@ class ScriptProcessor
             throw new InvalidInputException('Failed to read template from path ' . $templatePath);
         }
         if ($codeChunks) {
-            $template = $adapter->processTemplate($template, $codeChunks);
+            $template = $chunkAdapter->processTemplate($template, $codeChunks);
         } elseif ($script) {
             $template = $adapter->processTemplate($template, $script);
         } else {
