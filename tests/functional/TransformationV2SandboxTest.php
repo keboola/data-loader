@@ -32,10 +32,10 @@ class TransformationV2SandboxTest extends BaseDatadirTest
         }
         $this->components = new Components($this->client);
         $options = new ListComponentConfigurationsOptions();
-        $options->setComponentId('transformation');
+        $options->setComponentId(self::COMPONENT_ID);
         $configs = $this->components->listComponentConfigurations($options);
         foreach ($configs as $config) {
-            $this->components->deleteConfiguration('transformation', $config['id']);
+            $this->components->deleteConfiguration(self::COMPONENT_ID, $config['id']);
         }
     }
 
@@ -51,13 +51,12 @@ class TransformationV2SandboxTest extends BaseDatadirTest
                     'tables' => [
                         [
                             'source' => 'in.c-main.source',
-                            'destination' => 'data-loader.csv',
+                            'destination' => 'filtered.csv',
                             'changed_since' => null,
-                            'where_column' => 'a',
-                            'where_values' => ['e', 'f'],
+                            'where_column' => 'id',
+                            'where_values' => ['68640847'],
                             'where_operator' => 'eq',
                             'limit' => 10,
-                            'columns' => ['x', 'y'],
                         ],
                     ],
                     'files' => [
@@ -112,26 +111,31 @@ class TransformationV2SandboxTest extends BaseDatadirTest
             '',
             __DIR__ . '/transformationV2-fullConfig/expected/data/in'
         );
+        $targetFile = __DIR__ . '/transformationV2-fullConfig/expected/data/in/files/' . $fileId . '_dummy';
+        file_put_contents(
+            $targetFile,
+            'content'
+        );
         $tempDatadir = $this->getTempDatadir($specification);
         $process = $this->runScript($tempDatadir->getTmpFolder(), $envs);
         $this->assertMatchesSpecification($specification, $process, $tempDatadir->getTmpFolder());
         $output = $process->getOutput();
         $output = preg_replace('#\[.*?\]#', '', $output);
         $output = preg_replace('#\{.*?\}#', '', $output);
-        
+        var_dump($output);
+        var_dump($process->getErrorOutput());
         self::assertEquals(
             implode("\n", [
                 ' app-logger.INFO: Starting Data Loader  ',
                 ' app-logger.INFO: DataLoader is loading data  ',
-                ' app-logger.INFO: Reading configuration ' . $configuration['id'] . ' ',
-                ' app-logger.INFO: Loaded transformation script (size 43).  ',
+                ' app-logger.INFO: Reading ' . self::COMPONENT_ID . ' configuration ' . $configuration['id'] . '  ',
+                ' app-logger.INFO: Loaded transformation script (size 26).  ',
                 ' app-logger.INFO: Found no user-defined template, using built-in.  ',
                 ' app-logger.INFO: Fetching file dummy (' . $fileId . ').  ',
                 ' app-logger.INFO: Fetched file dummy (' . $fileId . ').  ',
                 ' app-logger.INFO: All files were fetched.  ',
                 ' app-logger.INFO: Fetched table in.c-main.source.  ',
-                ' app-logger.INFO: Fetched table in.c-main.source.  ',
-                ' app-logger.INFO: Processing 2 local table exports.  ',
+                ' app-logger.INFO: Processing 1 local table exports.  ',
                 ' app-logger.INFO: All tables were fetched.  ',
                 '',
             ]),
