@@ -134,21 +134,20 @@ class ConfigValidator
         $component = new Components($this->client);
         try {
             $configData = $component->getConfigurationVersion($componentId, $configId, $versionId);
-            var_dump($configData);
         } catch (ClientException $e) {
             throw new InvalidInputException(
                 'Failed to get ' . $componentId . ' configuration: ' . $e->getMessage(),
                 self::CONFIGURATION_INVALID
             );
         }
-        if (empty($configData)) {
-            throw new InvalidInputException('Configuration Row not found.', self::CONFIGURATION_INVALID);
+        if (empty($configData['configuration'])) {
+            throw new InvalidInputException('Configuration not found.', self::CONFIGURATION_INVALID);
         }
         $processor = new Processor();
         try {
             $configData = $processor->processConfiguration(
                 new TransformationV2Config(),
-                ['configuration' => $configData]
+                ['configuration' => $configData['configuration']]
             );
         } catch (InvalidConfigurationException $e) {
             throw new InvalidInputException(
@@ -162,8 +161,8 @@ class ConfigValidator
         $scriptLength = 0;
         foreach ($configData['parameters']['blocks'] as $block) {
             foreach ($block['codes'] as $codeChunk) {
-                $this->codeChunks[] = $codeChunk;
-                $scriptLength += strlen($codeChunk);
+                $this->codeChunks[] = implode("\n", $codeChunk['script']);
+                $scriptLength += strlen(implode("\n", $codeChunk['script']));
             }
         }
         $this->input = $configData['storage']['input'];
