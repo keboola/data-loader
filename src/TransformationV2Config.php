@@ -15,7 +15,7 @@ class TransformationV2Config implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $root = $treeBuilder->root('configuration');
-        $definition = $root->children()
+        $definition = $root->ignoreExtraKeys(false)->children()
             ->arrayNode('parameters')
                 ->addDefaultsIfNotSet()
                 ->ignoreExtraKeys(true)
