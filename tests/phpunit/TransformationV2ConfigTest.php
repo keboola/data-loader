@@ -41,6 +41,32 @@ class TransformationV2ConfigTest extends TestCase
                     ],
                 ],
             ],
+            'extra stuff' => [
+                [
+                    'storage' => [],
+                    'parameters' => [],
+                    'variables_id' => '1234143',
+                    'variables_values_id' => '314123',
+                    'shared_code_id' => '23424553',
+                    'shared_code_row_ids' => ['6535334']
+                ],
+                [
+                    'storage' => [
+                        'input' => [
+                            'files' => [],
+                            'tables' => [],
+                        ],
+                    ],
+                    'parameters' => [
+                        'type' => 'python',
+                        'blocks' => [],
+                    ],
+                    'variables_id' => '1234143',
+                    'variables_values_id' => '314123',
+                    'shared_code_id' => '23424553',
+                    'shared_code_row_ids' => ['6535334']
+                ],
+            ],
             'full config' => [
                 [
                     'storage' => [
