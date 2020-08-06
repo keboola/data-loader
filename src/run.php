@@ -7,6 +7,7 @@ require __DIR__ . '/../vendor/autoload.php';
 use Keboola\DataLoader\ConfigValidator;
 use Keboola\DataLoader\ScriptProcessor;
 use Keboola\InputMapping\Exception\InvalidInputException;
+use Keboola\InputMapping\Reader\NullWorkspaceProvider;
 use Keboola\InputMapping\Reader\Options\InputTableOptionsList;
 use Keboola\InputMapping\Reader\Reader;
 use Keboola\InputMapping\Reader\State\InputTableStateList;
@@ -24,7 +25,7 @@ try {
     $validator->validate($log);
     $runId = $validator->getRunId();
 
-    $reader = new Reader($validator->getClient(), $log);
+    $reader = new Reader($validator->getClient(), $log, new NullWorkspaceProvider());
     $fs = new Filesystem();
     $fs->mkdir($validator->getDataDir() . '/in/tables/');
     $fs->mkdir($validator->getDataDir() . '/in/files/');
