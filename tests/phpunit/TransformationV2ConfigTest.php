@@ -129,12 +129,13 @@ class TransformationV2ConfigTest extends TestCase
                                 [
                                     'source' => 'in.c-main',
                                     'destination' => 'my.csv',
-                                    'changed_since' => null,
+                                    'changed_since' => '',
                                     'where_column' => 'a',
                                     'where_values' => ['e', 'f'],
                                     'where_operator' => 'eq',
                                     'limit' => 10,
                                     'columns' => ['x', 'y'],
+                                    'column_types' => [],
                                 ],
                             ],
                             'files' => [
@@ -200,7 +201,7 @@ class TransformationV2ConfigTest extends TestCase
         $processor = new Processor();
         self::expectException(InvalidConfigurationException::class);
         self::expectExceptionMessage(
-            'Unrecognized option "invalidKey" under "configuration.storage.input.tables.0". Available options are "changed_since", "columns", "days", "destination", "limit", "source", "source_search", "where_column", "where_operator", "where_values"'
+            'Unrecognized option "invalidKey" under "configuration.storage.input.tables.0". Available options are "changed_since", "column_types", "columns", "days", "destination", "limit", "source", "source_search", "where_column", "where_operator", "where_values"'
         );
         $processor->processConfiguration(new TransformationV2Config(), ['configuration' => $inData]);
     }

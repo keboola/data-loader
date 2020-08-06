@@ -84,6 +84,7 @@ class ExportConfigTest extends TestCase
                                     'where_operator' => 'eq',
                                     'limit' => 10,
                                     'columns' => ['x', 'y'],
+                                    'column_types' => [],
                                 ],
                             ],
                             'files' => [
