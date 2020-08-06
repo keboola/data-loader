@@ -205,6 +205,7 @@ class ConfigValidatorTest extends TestCase
                         'columns' => [],
                         'where_values' => [],
                         'where_operator' => 'eq',
+                        'column_types' => [],
                     ],
                     [
                         'source' => 'in.c-main.source',
@@ -213,6 +214,7 @@ class ConfigValidatorTest extends TestCase
                         'where_values' => ['68640847'],
                         'where_operator' => 'eq',
                         'where_column' => 'id',
+                        'column_types' => [],
                     ],
                 ],
                 'files' => [
