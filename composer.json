@@ -23,7 +23,7 @@
         "php": ">=7.3",
         "ext-json": "*",
         "keboola/datadir-tests": "^2.3",
-        "keboola/input-mapping": "^8.3",
+        "keboola/input-mapping": "^9.3",
         "keboola/php-utils": "^2.3",
         "monolog/monolog": "^1.22"
     },
