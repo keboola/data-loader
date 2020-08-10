@@ -16,9 +16,13 @@ class WorkspaceProvider implements WorkspaceProviderInterface
     /** @var Client $storageApiClient */
     private $storageApiClient;
 
-    public function __construct(Client $storageApiClient, string $workspaceId)
+    /** @var string $workspacePassword */
+    private $workspacePassword;
+
+    public function __construct(Client $storageApiClient, string $workspaceId, string $workspacePassword)
     {
         $this->workspaceId = $workspaceId;
+        $this->workspacePassword = $workspacePassword;
         $this->storageApiClient = $storageApiClient;
     }
 
@@ -54,7 +58,7 @@ class WorkspaceProvider implements WorkspaceProviderInterface
             'database' => $workspace['connection']['database'],
             'schema' => $workspace['connection']['schema'],
             'user' => $workspace['connection']['user'],
-            'password' => $workspace['connection']['password'],
+            'password' => $this->workspacePassword,
         ];
     }
 }

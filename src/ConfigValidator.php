@@ -65,6 +65,9 @@ class ConfigValidator
     /** @var string|null  */
     private $workspaceType = null;
 
+    /** @var string|null  */
+    private $workspacePassword = null;
+
     /**
      * @var Logger
      */
@@ -245,8 +248,15 @@ class ConfigValidator
 
     private function validateWorkspace(): void
     {
-        $this->workspaceId = getenv('WORKSPACE_ID') ?? null;
-        $this->workspaceType = getenv('WORKSPACE_TYPE') ?? null;
+        $this->workspaceId = getenv('WORKSPACE_ID') ? getenv('WORKSPACE_ID') : null;
+        $this->workspaceType = getenv('WORKSPACE_TYPE') ? getenv('WORKSPACE_TYPE') : null;
+        $this->workspacePassword = getenv('WORKSPACE_PASSWORD') ? getenv('WORKSPACE_PASSWORD') : null;
+        if ($this->workspaceId && !$this->workspacePassword) {
+            throw new InvalidInputException(
+                "When using db storage staging, both WORKSPACE_ID and WORKSPACE_PASSWORD are required",
+                self::INTERNAL_ERROR
+            );
+        }
     }
 
     public function validate(Logger $logger): void
@@ -305,13 +315,18 @@ class ConfigValidator
         return $this->type;
     }
 
-    public function getWorkspaceId(): string
+    public function getWorkspaceId(): ?string
     {
         return $this->workspaceId;
     }
 
-    public function getWorkspaceType(): string
+    public function getWorkspaceType(): ?string
     {
         return $this->workspaceType;
+    }
+
+    public function getWorkspacePassword(): ?string
+    {
+        return $this->workspacePassword;
     }
 }

@@ -25,9 +25,9 @@ try {
     $validator = new ConfigValidator();
     $validator->validate($log);
     $runId = $validator->getRunId();
-
+    
     $workspaceProvider = $validator->getWorkspaceId()
-        ? new WorkspaceProvider($validator->getClient(), $validator->getWorkspaceId())
+        ? new WorkspaceProvider($validator->getClient(), $validator->getWorkspaceId(), $validator->getWorkspacePassword())
         : new NullWorkspaceProvider();
     $reader = new Reader($validator->getClient(), $log, $workspaceProvider);
     $fs = new Filesystem();
@@ -62,7 +62,8 @@ try {
             $reader->downloadTables(
                 new InputTableOptionsList($validator->getInput()['tables']),
                 new InputTableStateList([]),
-                $validator->getDataDir() . '/in/tables/'
+                $validator->getDataDir() . '/in/tables/',
+                $validator->getWorkspaceId() ? Reader::STAGING_SNOWFLAKE : Reader::STAGING_LOCAL
             );
         } catch (InvalidInputException $e) {
             throw new InvalidInputException($e->getMessage(), ConfigValidator::TABLES_ERROR, $e);
