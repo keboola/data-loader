@@ -29,8 +29,8 @@ try {
     $workspaceProvider = $validator->getWorkspaceId()
         ? new WorkspaceProvider(
             $validator->getClient(),
-            $validator->getWorkspaceId(),
-            $validator->getWorkspacePassword()
+            (string) $validator->getWorkspaceId(),
+            (string) $validator->getWorkspacePassword()
         )
         : new NullWorkspaceProvider();
     $reader = new Reader($validator->getClient(), $log, $workspaceProvider);

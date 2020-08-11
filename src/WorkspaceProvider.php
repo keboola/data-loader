@@ -13,11 +13,11 @@ class WorkspaceProvider implements WorkspaceProviderInterface
     /** @var string $workspaceId */
     private $workspaceId;
 
-    /** @var Client $storageApiClient */
-    private $storageApiClient;
-
     /** @var string $workspacePassword */
     private $workspacePassword;
+
+    /** @var Client $storageApiClient */
+    private $storageApiClient;
 
     public function __construct(Client $storageApiClient, string $workspaceId, string $workspacePassword)
     {
