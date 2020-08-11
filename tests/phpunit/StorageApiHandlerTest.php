@@ -42,7 +42,7 @@ class StorageApiHandlerTest extends TestCase
         $message = ['level' => Logger::DEBUG, 'message' => 'test debug message'];
         $handler->handle($message);
         $events = [];
-        sleep(1);
+        sleep(2);
         foreach ($client->listEvents() as $event) {
             if ($event['runId'] === $testRunId) {
                 $events[$event['id']] = [
