@@ -59,6 +59,15 @@ class ConfigValidator
      */
     private $type;
 
+    /** @var string|null  */
+    private $workspaceId = null;
+
+    /** @var string|null  */
+    private $workspaceType = null;
+
+    /** @var string|null  */
+    private $workspacePassword = null;
+
     /**
      * @var Logger
      */
@@ -237,6 +246,19 @@ class ConfigValidator
         $this->logger->info(sprintf('Loaded transformation script (size %s).', strlen($this->script)));
     }
 
+    private function validateWorkspace(): void
+    {
+        $this->workspaceId = getenv('WORKSPACE_ID') ? (string) getenv('WORKSPACE_ID') : null;
+        $this->workspaceType = getenv('WORKSPACE_TYPE') ? (string) getenv('WORKSPACE_TYPE') : null;
+        $this->workspacePassword = getenv('WORKSPACE_PASSWORD') ? (string) getenv('WORKSPACE_PASSWORD') : null;
+        if ($this->workspaceId && !$this->workspacePassword) {
+            throw new InvalidInputException(
+                'When using db storage staging, both WORKSPACE_ID and WORKSPACE_PASSWORD are required',
+                self::INTERNAL_ERROR
+            );
+        }
+    }
+
     public function validate(Logger $logger): void
     {
         $this->validateClient();
@@ -246,6 +268,7 @@ class ConfigValidator
         $logger->info('DataLoader is loading data', ['runId' => $this->runId]);
         $this->logger = $logger;
         $this->validateDataDir();
+        $this->validateWorkspace();
         if (empty(getenv('KBC_CONFIG_ID'))) { // for fwd compat
             $this->validateExportConfig();
         }
@@ -290,5 +313,20 @@ class ConfigValidator
     public function getType(): string
     {
         return $this->type;
+    }
+
+    public function getWorkspaceId(): ?string
+    {
+        return $this->workspaceId;
+    }
+
+    public function getWorkspaceType(): ?string
+    {
+        return $this->workspaceType;
+    }
+
+    public function getWorkspacePassword(): ?string
+    {
+        return $this->workspacePassword;
     }
 }

@@ -6,6 +6,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Keboola\DataLoader\ConfigValidator;
 use Keboola\DataLoader\ScriptProcessor;
+use Keboola\DataLoader\WorkspaceProvider;
 use Keboola\InputMapping\Exception\InvalidInputException;
 use Keboola\InputMapping\Reader\NullWorkspaceProvider;
 use Keboola\InputMapping\Reader\Options\InputTableOptionsList;
@@ -25,7 +26,14 @@ try {
     $validator->validate($log);
     $runId = $validator->getRunId();
 
-    $reader = new Reader($validator->getClient(), $log, new NullWorkspaceProvider());
+    $workspaceProvider = $validator->getWorkspaceId()
+        ? new WorkspaceProvider(
+            $validator->getClient(),
+            (string) $validator->getWorkspaceId(),
+            (string) $validator->getWorkspacePassword()
+        )
+        : new NullWorkspaceProvider();
+    $reader = new Reader($validator->getClient(), $log, $workspaceProvider);
     $fs = new Filesystem();
     $fs->mkdir($validator->getDataDir() . '/in/tables/');
     $fs->mkdir($validator->getDataDir() . '/in/files/');
@@ -58,7 +66,8 @@ try {
             $reader->downloadTables(
                 new InputTableOptionsList($validator->getInput()['tables']),
                 new InputTableStateList([]),
-                $validator->getDataDir() . '/in/tables/'
+                $validator->getDataDir() . '/in/tables/',
+                $validator->getWorkspaceId() ? Reader::STAGING_SNOWFLAKE : Reader::STAGING_LOCAL
             );
         } catch (InvalidInputException $e) {
             throw new InvalidInputException($e->getMessage(), ConfigValidator::TABLES_ERROR, $e);

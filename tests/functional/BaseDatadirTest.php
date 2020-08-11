@@ -28,7 +28,14 @@ abstract class BaseDatadirTest extends AbstractDatadirTestCase
         if (empty(getenv('KBC_TEST_TOKEN')) || empty(getenv('KBC_TEST_URL'))) {
             self::fail('KBC_TEST_TOKEN and KBC_TEST_URL environment variables must be set.');
         }
-        $this->client = new Client(['token' => getenv('KBC_TEST_TOKEN'), 'url' => getenv('KBC_TEST_URL')]);
+        $this->client = new Client([
+            'token' => getenv('KBC_TEST_TOKEN'),
+            'url' => getenv('KBC_TEST_URL'),
+            'backoffMaxTries' => 1,
+            'jobPollRetryDelay' => function () {
+                return 1;
+            },
+        ]);
         try {
             $this->client->dropBucket('in.c-main', ['force' => true]);
         } catch (Exception $e) {
