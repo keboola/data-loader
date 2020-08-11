@@ -25,9 +25,13 @@ try {
     $validator = new ConfigValidator();
     $validator->validate($log);
     $runId = $validator->getRunId();
-    
+
     $workspaceProvider = $validator->getWorkspaceId()
-        ? new WorkspaceProvider($validator->getClient(), $validator->getWorkspaceId(), $validator->getWorkspacePassword())
+        ? new WorkspaceProvider(
+            $validator->getClient(),
+            $validator->getWorkspaceId(),
+            $validator->getWorkspacePassword()
+        )
         : new NullWorkspaceProvider();
     $reader = new Reader($validator->getClient(), $log, $workspaceProvider);
     $fs = new Filesystem();

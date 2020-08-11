@@ -253,7 +253,7 @@ class ConfigValidator
         $this->workspacePassword = getenv('WORKSPACE_PASSWORD') ? getenv('WORKSPACE_PASSWORD') : null;
         if ($this->workspaceId && !$this->workspacePassword) {
             throw new InvalidInputException(
-                "When using db storage staging, both WORKSPACE_ID and WORKSPACE_PASSWORD are required",
+                'When using db storage staging, both WORKSPACE_ID and WORKSPACE_PASSWORD are required',
                 self::INTERNAL_ERROR
             );
         }
