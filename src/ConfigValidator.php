@@ -81,13 +81,7 @@ class ConfigValidator
         if (empty($token)) {
             throw new InvalidInputException('Environment KBC_TOKEN is empty.', self::INTERNAL_ERROR);
         }
-        $options = [
-            'token' => $token,
-            'backoffMaxTries' => 1,
-            'jobPollRetryDelay' => function () {
-                return 1;
-            },
-        ];
+        $options = ['token' => $token];
         if (getenv('KBC_STORAGEAPI_URL')) {
             $options['url'] = getenv('KBC_STORAGEAPI_URL');
         }
