@@ -184,7 +184,6 @@ class ConfigValidator
                 new TransformationV2Config(),
                 ['configuration' => $configData['configuration']]
             );
-
         } catch (InvalidConfigurationException $e) {
             throw new InvalidInputException(
                 'Configuration is invalid: ' . $e->getMessage(),
