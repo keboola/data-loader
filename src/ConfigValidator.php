@@ -184,7 +184,7 @@ class ConfigValidator
                 new TransformationV2Config(),
                 ['configuration' => $configData['configuration']]
             );
-            var_dump($configData);
+
         } catch (InvalidConfigurationException $e) {
             throw new InvalidInputException(
                 'Configuration is invalid: ' . $e->getMessage(),
@@ -201,7 +201,6 @@ class ConfigValidator
                 $scriptLength += strlen(implode("\n", $codeChunk['script']));
             }
         }
-        var_dump($this->codeChunks);
         $this->input = $configData['storage']['input'];
         $this->logger->info(sprintf('Loaded transformation script (size %s).', $scriptLength));
     }
