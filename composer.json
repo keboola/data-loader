@@ -36,7 +36,7 @@
     },
     "scripts": {
         "tests-phpunit": "phpunit",
-        "tests-datadir": "phpunit tests/functional --filter testResolveVariables",
+        "tests-datadir": "phpunit tests/functional",
         "tests": [
             "@tests-phpunit",
             "@tests-datadir"
