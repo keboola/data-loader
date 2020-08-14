@@ -150,10 +150,10 @@ class ConfigValidator
         }
         $this->logger->info('Reading ' . $componentId . ' configuration ' . $configId);
         $variableValuesId = getenv('KBC_VARIABLE_VALUES_ID')
-            ? getenv('KBC_VARIABLE_VALUES_ID')
+            ? (string) getenv('KBC_VARIABLE_VALUES_ID')
             : null;
         $variableValuesData = getenv('KBC_VARIABLE_VALUES_DATA')
-            ? getenv('KBC_VARIABLE_VALUES_DATA')
+            ? (array) getenv('KBC_VARIABLE_VALUES_DATA')
             : [];
         $options = ['token' => getenv('KBC_TOKEN')];
         if (getenv('KBC_DOCKERAPI_URL')) {
@@ -161,9 +161,14 @@ class ConfigValidator
         }
         $options['runId'] = $this->client->getRunId();
         $syrupClient = new SyrupClient($options);
-        $component = new Components($this->client);
         try {
-            $configData = $syrupClient->resolveConfiguration($componentId, $configId, $versionId, $variableValuesId, $variableValuesData);
+            $configData = $syrupClient->resolveConfiguration(
+                $componentId,
+                $configId,
+                $versionId,
+                $variableValuesId,
+                $variableValuesData
+            );
         } catch (SyrupClientException $e) {
             throw new InvalidInputException(
                 'Failed to get ' . $componentId . ' configuration: ' . $e->getMessage(),
@@ -179,6 +184,7 @@ class ConfigValidator
                 new TransformationV2Config(),
                 ['configuration' => $configData['configuration']]
             );
+            var_dump($configData);
         } catch (InvalidConfigurationException $e) {
             throw new InvalidInputException(
                 'Configuration is invalid: ' . $e->getMessage(),
@@ -195,6 +201,7 @@ class ConfigValidator
                 $scriptLength += strlen(implode("\n", $codeChunk['script']));
             }
         }
+        var_dump($this->codeChunks);
         $this->input = $configData['storage']['input'];
         $this->logger->info(sprintf('Loaded transformation script (size %s).', $scriptLength));
     }
