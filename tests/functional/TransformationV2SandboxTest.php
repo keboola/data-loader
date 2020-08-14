@@ -211,7 +211,6 @@ class TransformationV2SandboxTest extends BaseDatadirTest
             ]
         );
         $createdConfig = $components->addConfiguration($configuration);
-        var_dump($createdConfig);
         $envs = [
             'KBC_TOKEN' => getenv('KBC_TEST_TOKEN'),
             'KBC_STORAGEAPI_URL' => getenv('KBC_TEST_URL'),
