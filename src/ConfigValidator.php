@@ -8,6 +8,8 @@ use Keboola\InputMapping\Exception\InvalidInputException;
 use Keboola\StorageApi\Client;
 use Keboola\StorageApi\ClientException;
 use Keboola\StorageApi\Components;
+use Keboola\Syrup\Client as SyrupClient;
+use Keboola\Syrup\ClientException as SyrupClientException;
 use Monolog\Logger;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
@@ -79,10 +81,17 @@ class ConfigValidator
         if (empty($token)) {
             throw new InvalidInputException('Environment KBC_TOKEN is empty.', self::INTERNAL_ERROR);
         }
-        $options = ['token' => $token];
+        $options = [
+            'token' => $token,
+            'backoffMaxTries' => 1,
+            'jobPollRetryDelay' => function () {
+                return 1;
+            },
+        ];
         if (getenv('KBC_STORAGEAPI_URL')) {
             $options['url'] = getenv('KBC_STORAGEAPI_URL');
         }
+
         $this->client = new Client($options);
 
         $runId = getenv('KBC_RUNID');
@@ -133,17 +142,29 @@ class ConfigValidator
         $configId = getenv('KBC_CONFIG_ID');
         $componentId = getenv('KBC_COMPONENT_ID');
         $versionId = getenv('KBC_CONFIG_VERSION');
-        $this->logger->info('Reading ' . $componentId . ' configuration ' . $configId);
         if (empty($configId) || empty($componentId) || empty($versionId)) {
             throw new InvalidInputException(
                 'Environment KBC_COMPONENT_ID or KBC_CONFIGURATION_ID or KBC_CONFIG_VERSION is empty',
                 self::INTERNAL_ERROR
             );
         }
+        $this->logger->info('Reading ' . $componentId . ' configuration ' . $configId);
+        $variableValuesId = getenv('KBC_VARIABLE_VALUES_ID')
+            ? getenv('KBC_VARIABLE_VALUES_ID')
+            : null;
+        $variableValuesData = getenv('KBC_VARIABLE_VALUES_DATA')
+            ? getenv('KBC_VARIABLE_VALUES_DATA')
+            : [];
+        $options = ['token' => getenv('KBC_TOKEN')];
+        if (getenv('KBC_DOCKERAPI_URL')) {
+            $options['url'] = getenv('KBC_DOCKERAPI_URL');
+        }
+        $options['runId'] = $this->client->getRunId();
+        $syrupClient = new SyrupClient($options);
         $component = new Components($this->client);
         try {
-            $configData = $component->getConfigurationVersion($componentId, $configId, $versionId);
-        } catch (ClientException $e) {
+            $configData = $syrupClient->resolveConfiguration($componentId, $configId, $versionId, $variableValuesId, $variableValuesData);
+        } catch (SyrupClientException $e) {
             throw new InvalidInputException(
                 'Failed to get ' . $componentId . ' configuration: ' . $e->getMessage(),
                 self::CONFIGURATION_INVALID
