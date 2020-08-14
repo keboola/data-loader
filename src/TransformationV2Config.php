@@ -47,6 +47,8 @@ class TransformationV2Config implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end()
+            ->arrayNode('variableValuesData')->end()
+            ->scalarNode('variableValuesId')->end()
             ->arrayNode('storage')
                 ->addDefaultsIfNotSet()
                 ->children()
