@@ -25,7 +25,8 @@
         "keboola/datadir-tests": "^2.3",
         "keboola/input-mapping": "^9.3",
         "keboola/php-utils": "^2.3",
-        "monolog/monolog": "^1.22"
+        "monolog/monolog": "^1.22",
+        "keboola/syrup-php-client": "^5.4"
     },
     "require-dev": {
         "jakub-onderka/php-parallel-lint": "^1.0",
@@ -40,7 +41,6 @@
             "@tests-phpunit",
             "@tests-datadir"
         ],
-
         "phpstan": "phpstan analyse --no-progress --level=max src -c phpstan.neon",
         "phpcs": "phpcs --extensions=php src",
         "phpcbf": "phpcbf --extensions=php src",

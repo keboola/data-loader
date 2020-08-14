@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2fac39c9b8040631ce0f742e2b19548c",
+    "content-hash": "8d00bfc1ab6e437cbf47263270d564d9",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.147.13",
+            "version": "3.149.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e3354b0aedea5f2b0e22e6932cc9e65d98657836"
+                "reference": "0ab4ac60f94d53d55f2c7374deb75d9a58961970"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e3354b0aedea5f2b0e22e6932cc9e65d98657836",
-                "reference": "e3354b0aedea5f2b0e22e6932cc9e65d98657836",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0ab4ac60f94d53d55f2c7374deb75d9a58961970",
+                "reference": "0ab4ac60f94d53d55f2c7374deb75d9a58961970",
                 "shasum": ""
             },
             "require": {
@@ -89,7 +89,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-08-05T18:16:36+00:00"
+            "time": "2020-08-13T18:10:50+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -586,16 +586,16 @@
         },
         {
             "name": "keboola/storage-api-client",
-            "version": "10.16.3",
+            "version": "10.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/storage-api-php-client.git",
-                "reference": "4aff5e630da7f63870ad0d5acd8731ec5aaf784a"
+                "reference": "4178d25d80b36f88fd0857b97cb704015191f542"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/storage-api-php-client/zipball/4aff5e630da7f63870ad0d5acd8731ec5aaf784a",
-                "reference": "4aff5e630da7f63870ad0d5acd8731ec5aaf784a",
+                "url": "https://api.github.com/repos/keboola/storage-api-php-client/zipball/4178d25d80b36f88fd0857b97cb704015191f542",
+                "reference": "4178d25d80b36f88fd0857b97cb704015191f542",
                 "shasum": ""
             },
             "require": {
@@ -633,7 +633,48 @@
             ],
             "description": "Keboola Storage API PHP CLient",
             "homepage": "http://keboola.com",
-            "time": "2020-08-03T13:00:04+00:00"
+            "time": "2020-08-12T10:56:00+00:00"
+        },
+        {
+            "name": "keboola/syrup-php-client",
+            "version": "5.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/keboola/syrup-php-client.git",
+                "reference": "5aa7fe8d131d57fd4aa37484002a16e7b04ab588"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/keboola/syrup-php-client/zipball/5aa7fe8d131d57fd4aa37484002a16e7b04ab588",
+                "reference": "5aa7fe8d131d57fd4aa37484002a16e7b04ab588",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3"
+            },
+            "require-dev": {
+                "monolog/monolog": "^1.24",
+                "phpunit/phpunit": "^5.7",
+                "squizlabs/php_codesniffer": "^3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Keboola": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Keboola",
+                    "email": "devel@keboola.com"
+                }
+            ],
+            "description": "Keboola Syrup PHP Client",
+            "time": "2020-08-11T14:26:50+00:00"
         },
         {
             "name": "microsoft/azure-storage-blob",
@@ -1528,6 +1569,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2019-09-17T06:23:10+00:00"
         },
         {
@@ -2319,16 +2361,16 @@
         },
         {
             "name": "seld/jsonlint",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/jsonlint.git",
-                "reference": "ff2aa5420bfbc296cf6a0bc785fa5b35736de7c1"
+                "reference": "3d5eb71705adfa34bd34b993400622932b2f62fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/ff2aa5420bfbc296cf6a0bc785fa5b35736de7c1",
-                "reference": "ff2aa5420bfbc296cf6a0bc785fa5b35736de7c1",
+                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/3d5eb71705adfa34bd34b993400622932b2f62fd",
+                "reference": "3d5eb71705adfa34bd34b993400622932b2f62fd",
                 "shasum": ""
             },
             "require": {
@@ -2374,7 +2416,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-04-30T19:05:18+00:00"
+            "time": "2020-08-13T09:07:59+00:00"
         },
         {
             "name": "symfony/config",
@@ -3539,16 +3581,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.5.5",
+            "version": "3.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "73e2e7f57d958e7228fce50dc0c61f58f017f9f6"
+                "reference": "e97627871a7eab2f70e59166072a6b767d5834e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/73e2e7f57d958e7228fce50dc0c61f58f017f9f6",
-                "reference": "73e2e7f57d958e7228fce50dc0c61f58f017f9f6",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/e97627871a7eab2f70e59166072a6b767d5834e0",
+                "reference": "e97627871a7eab2f70e59166072a6b767d5834e0",
                 "shasum": ""
             },
             "require": {
@@ -3586,7 +3628,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2020-04-17T01:09:41+00:00"
+            "time": "2020-08-10T04:50:15+00:00"
         }
     ],
     "aliases": [],

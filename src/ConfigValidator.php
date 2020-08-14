@@ -8,6 +8,8 @@ use Keboola\InputMapping\Exception\InvalidInputException;
 use Keboola\StorageApi\Client;
 use Keboola\StorageApi\ClientException;
 use Keboola\StorageApi\Components;
+use Keboola\Syrup\Client as SyrupClient;
+use Keboola\Syrup\ClientException as SyrupClientException;
 use Monolog\Logger;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
@@ -83,6 +85,7 @@ class ConfigValidator
         if (getenv('KBC_STORAGEAPI_URL')) {
             $options['url'] = getenv('KBC_STORAGEAPI_URL');
         }
+
         $this->client = new Client($options);
 
         $runId = getenv('KBC_RUNID');
@@ -133,17 +136,34 @@ class ConfigValidator
         $configId = getenv('KBC_CONFIG_ID');
         $componentId = getenv('KBC_COMPONENT_ID');
         $versionId = getenv('KBC_CONFIG_VERSION');
-        $this->logger->info('Reading ' . $componentId . ' configuration ' . $configId);
         if (empty($configId) || empty($componentId) || empty($versionId)) {
             throw new InvalidInputException(
                 'Environment KBC_COMPONENT_ID or KBC_CONFIGURATION_ID or KBC_CONFIG_VERSION is empty',
                 self::INTERNAL_ERROR
             );
         }
-        $component = new Components($this->client);
+        $this->logger->info('Reading ' . $componentId . ' configuration ' . $configId);
+        $variableValuesId = getenv('KBC_VARIABLE_VALUES_ID')
+            ? (string) getenv('KBC_VARIABLE_VALUES_ID')
+            : null;
+        $variableValuesData = getenv('KBC_VARIABLE_VALUES_DATA')
+            ? (array) getenv('KBC_VARIABLE_VALUES_DATA')
+            : [];
+        $options = ['token' => getenv('KBC_TOKEN')];
+        if (getenv('KBC_DOCKERAPI_URL')) {
+            $options['url'] = getenv('KBC_DOCKERAPI_URL');
+        }
+        $options['runId'] = $this->client->getRunId();
+        $syrupClient = new SyrupClient($options);
         try {
-            $configData = $component->getConfigurationVersion($componentId, $configId, $versionId);
-        } catch (ClientException $e) {
+            $configData = $syrupClient->resolveConfiguration(
+                $componentId,
+                $configId,
+                $versionId,
+                $variableValuesId,
+                $variableValuesData
+            );
+        } catch (SyrupClientException $e) {
             throw new InvalidInputException(
                 'Failed to get ' . $componentId . ' configuration: ' . $e->getMessage(),
                 self::CONFIGURATION_INVALID
