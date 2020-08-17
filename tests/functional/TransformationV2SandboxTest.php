@@ -259,4 +259,110 @@ class TransformationV2SandboxTest extends BaseDatadirTest
         $components->deleteConfiguration('keboola.variables', $variablesId);
         $components->deleteConfiguration('keboola.shared-code', $sharedCodeId);
     }
+
+    public function testResolveVariablesInline(): void
+    {
+        $components = new Components($this->client);
+        list($variablesId, $variableValuesId, $sharedCodeId, $sharedCodeRowId) = $this->createSharedConfigurations();
+
+        $componentId = 'keboola.python-transformation-v2';
+        $configuration = new Configuration();
+        $configuration->setComponentId($componentId);
+        $configuration->setName(uniqid('test-resolve-'));
+        $configuration->setConfiguration(
+            [
+                'storage' => [],
+                'parameters' => [
+                    "packages" => ["numpy"],
+                    "blocks" => [
+                        [
+                            "name" => "abc",
+                            "codes" => [
+                                [
+                                    "name" => "a",
+                                    "script" => ["{{firstvar}}"]
+                                ],[
+                                    "name" => "b",
+                                    "script" => ["{{brainfuck}}"]
+                                ],[
+                                    "name" => "c",
+                                    "script" => ["{{secondvar}}"]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'variables_id' => $variablesId,
+                'variables_values_id' => $variableValuesId,
+                'shared_code_id' => $sharedCodeId,
+                'shared_code_row_ids' => [$sharedCodeRowId]
+            ]
+        );
+        $result = $components->addConfiguration($configuration);
+        $configId = $result['id'];
+        $configVersion = $result['version'];
+
+        $envs = [
+            'KBC_TOKEN' => getenv('KBC_TEST_TOKEN'),
+            'KBC_STORAGEAPI_URL' => getenv('KBC_TEST_URL'),
+            'KBC_COMPONENT_ID' => self::COMPONENT_ID,
+            'KBC_CONFIG_ID' => $configId,
+            'KBC_CONFIG_VERSION' => $configVersion,
+            'KBC_VARIABLE_VALUES_DATA' => [
+                'values' => [
+                    [
+                        'name' => 'firstvar',
+                        'value' => 'boo',
+                    ],
+                    [
+                        'name' => 'secondvar',
+                        'value' => 'foo',
+                    ],
+                    [
+                        'name' => 'brainfuck',
+                        'value' => 'not used',
+                    ],
+                ],
+            ],
+        ];
+
+        $specification = new DatadirTestSpecification(
+            __DIR__ . '/transformationV2-fullConfig/source/data',
+            0,
+            null,
+            '',
+            null
+        );
+
+        $tempDatadir = $this->getTempDatadir($specification);
+        $process = $this->runScript($tempDatadir->getTmpFolder(), $envs);
+
+        $scriptFile = $tempDatadir->getTmpFolder() . '/notebook.ipynb';
+        $expectedScriptFile = __DIR__ . '/files/variables-notebook.ipynb';
+        var_dump(file_get_contents($scriptFile));
+        self::assertEquals(
+            trim(file_get_contents($expectedScriptFile)),
+            trim(file_get_contents($scriptFile))
+        );
+
+        $output = $process->getOutput();
+        $output = preg_replace('#\[.*?\]#', '', $output);
+        $output = preg_replace('#\{.*?\}#', '', $output);
+        self::assertEquals(
+            implode("\n", [
+                ' app-logger.INFO: Starting Data Loader  ',
+                ' app-logger.INFO: DataLoader is loading data  ',
+                ' app-logger.INFO: Reading ' . self::COMPONENT_ID . ' configuration ' . $configId . '  ',
+                ' app-logger.INFO: Loaded transformation script (size 118).  ',
+                ' app-logger.INFO: Found no user-defined template, using built-in.  ',
+                ' app-logger.INFO: There are no input files.  ',
+                ' app-logger.INFO: There are no input tables.  ',
+                '',
+            ]),
+            $output
+        );
+        $components->deleteConfiguration($componentId, $configId);
+        $components->deleteConfiguration('keboola.variables', $variablesId);
+        $components->deleteConfiguration('keboola.shared-code', $sharedCodeId);
+    }
 }
