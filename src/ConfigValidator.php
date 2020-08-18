@@ -147,7 +147,7 @@ class ConfigValidator
             ? (string) getenv('KBC_VARIABLE_VALUES_ID')
             : null;
         $variableValuesData = getenv('KBC_VARIABLE_VALUES_DATA')
-            ? (array) getenv('KBC_VARIABLE_VALUES_DATA')
+            ? json_decode(getenv('KBC_VARIABLE_VALUES_DATA'), true)
             : [];
         $options = ['token' => getenv('KBC_TOKEN')];
         if (getenv('KBC_DOCKERAPI_URL')) {
