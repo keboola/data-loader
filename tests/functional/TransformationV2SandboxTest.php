@@ -336,7 +336,6 @@ class TransformationV2SandboxTest extends BaseDatadirTest
 
         $tempDatadir = $this->getTempDatadir($specification);
         $process = $this->runScript($tempDatadir->getTmpFolder(), $envs);
-        $output = $process->getOutput();
         $scriptFile = $tempDatadir->getTmpFolder() . '/notebook.ipynb';
         $expectedScriptFile = __DIR__ . '/files/variable-values-data-notebook.ipynb';
         self::assertEquals(
@@ -352,7 +351,7 @@ class TransformationV2SandboxTest extends BaseDatadirTest
                 ' app-logger.INFO: Starting Data Loader  ',
                 ' app-logger.INFO: DataLoader is loading data  ',
                 ' app-logger.INFO: Reading ' . self::COMPONENT_ID . ' configuration ' . $configId . '  ',
-                ' app-logger.INFO: Loaded transformation script (size 118).  ',
+                ' app-logger.INFO: Loaded transformation script (size 112).  ',
                 ' app-logger.INFO: Found no user-defined template, using built-in.  ',
                 ' app-logger.INFO: There are no input files.  ',
                 ' app-logger.INFO: There are no input tables.  ',
