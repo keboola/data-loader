@@ -308,7 +308,7 @@ class TransformationV2SandboxTest extends BaseDatadirTest
             'KBC_COMPONENT_ID' => self::COMPONENT_ID,
             'KBC_CONFIG_ID' => $configId,
             'KBC_CONFIG_VERSION' => $configVersion,
-            'KBC_VARIABLE_VALUES_DATA' => [
+            'KBC_VARIABLE_VALUES_DATA' => json_encode([
                 'values' => [
                     [
                         'name' => 'firstvar',
@@ -323,7 +323,7 @@ class TransformationV2SandboxTest extends BaseDatadirTest
                         'value' => 'not used',
                     ],
                 ],
-            ],
+            ]),
         ];
 
         $specification = new DatadirTestSpecification(
@@ -336,10 +336,9 @@ class TransformationV2SandboxTest extends BaseDatadirTest
 
         $tempDatadir = $this->getTempDatadir($specification);
         $process = $this->runScript($tempDatadir->getTmpFolder(), $envs);
-
+        $output = $process->getOutput();
         $scriptFile = $tempDatadir->getTmpFolder() . '/notebook.ipynb';
-        $expectedScriptFile = __DIR__ . '/files/variables-notebook.ipynb';
-        var_dump(file_get_contents($scriptFile));
+        $expectedScriptFile = __DIR__ . '/files/variable-values-data-notebook.ipynb';
         self::assertEquals(
             trim(file_get_contents($expectedScriptFile)),
             trim(file_get_contents($scriptFile))
