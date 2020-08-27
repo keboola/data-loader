@@ -26,13 +26,7 @@ try {
     $validator->validate($log);
     $runId = $validator->getRunId();
 
-    $workspaceProvider = $validator->getWorkspaceId()
-        ? new WorkspaceProvider(
-            $validator->getClient(),
-            (string) $validator->getWorkspaceId(),
-            (string) $validator->getWorkspacePassword()
-        )
-        : new NullWorkspaceProvider();
+    $workspaceProvider = $validator->getWorkspaceProvider();
     $reader = new Reader($validator->getClient(), $log, $workspaceProvider);
     $fs = new Filesystem();
     $fs->mkdir($validator->getDataDir() . '/in/tables/');
@@ -67,7 +61,7 @@ try {
                 new InputTableOptionsList($validator->getInput()['tables']),
                 new InputTableStateList([]),
                 $validator->getDataDir() . '/in/tables/',
-                $validator->getWorkspaceId() ? Reader::STAGING_SNOWFLAKE : Reader::STAGING_LOCAL
+                ($workspaceProvider instanceof WorkspaceProvider) ? $workspaceProvider->getWorkspaceStagingName() : Reader::STAGING_LOCAL
             );
         } catch (InvalidInputException $e) {
             throw new InvalidInputException($e->getMessage(), ConfigValidator::TABLES_ERROR, $e);

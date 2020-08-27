@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Keboola\DataLoader;
 
 use Keboola\InputMapping\Exception\InvalidInputException;
+use Keboola\InputMapping\Reader\NullWorkspaceProvider;
+use Keboola\InputMapping\Reader\WorkspaceProviderInterface;
 use Keboola\StorageApi\Client;
 use Keboola\StorageApi\ClientException;
 use Keboola\StorageApi\Components;
@@ -61,14 +63,8 @@ class ConfigValidator
      */
     private $type;
 
-    /** @var string|null  */
-    private $workspaceId = null;
-
-    /** @var string|null  */
-    private $workspaceType = null;
-
-    /** @var string|null  */
-    private $workspacePassword = null;
+    /** @var WorkspaceProvider|NullWorkspaceProvider  */
+    private $workspaceProvider;
 
     /**
      * @var Logger
@@ -266,13 +262,22 @@ class ConfigValidator
 
     private function validateWorkspace(): void
     {
-        $this->workspaceId = getenv('WORKSPACE_ID') ? (string) getenv('WORKSPACE_ID') : null;
-        $this->workspaceType = getenv('WORKSPACE_TYPE') ? (string) getenv('WORKSPACE_TYPE') : null;
-        $this->workspacePassword = getenv('WORKSPACE_PASSWORD') ? (string) getenv('WORKSPACE_PASSWORD') : null;
-        if ($this->workspaceId && !$this->workspacePassword) {
+        $workspaceId = getenv('WORKSPACE_ID') ? (string) getenv('WORKSPACE_ID') : null;
+        $workspaceType = getenv('WORKSPACE_TYPE') ? (string) getenv('WORKSPACE_TYPE') : null;
+        $workspacePassword = getenv('WORKSPACE_PASSWORD') ? (string) getenv('WORKSPACE_PASSWORD') : null;
+        if ($workspaceId && (!$workspacePassword || !$workspaceType)) {
             throw new InvalidInputException(
                 'When using db storage staging, both WORKSPACE_ID and WORKSPACE_PASSWORD are required',
                 self::INTERNAL_ERROR
+            );
+        }
+        $this->workspaceProvider = new NullWorkspaceProvider();
+        if ($workspaceId && $workspacePassword && $workspaceType) {
+            $this->workspaceProvider = new WorkspaceProvider(
+                $this->getClient(),
+                $workspaceId,
+                $workspacePassword,
+                $workspaceType
             );
         }
     }
@@ -333,18 +338,11 @@ class ConfigValidator
         return $this->type;
     }
 
-    public function getWorkspaceId(): ?string
+    /**
+     * @return WorkspaceProvider|NullWorkspaceProvider
+     */
+    public function getWorkspaceProvider()
     {
-        return $this->workspaceId;
-    }
-
-    public function getWorkspaceType(): ?string
-    {
-        return $this->workspaceType;
-    }
-
-    public function getWorkspacePassword(): ?string
-    {
-        return $this->workspacePassword;
+        return $this->workspaceProvider;
     }
 }
