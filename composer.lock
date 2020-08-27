@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d00bfc1ab6e437cbf47263270d564d9",
+    "content-hash": "cbd2e13b7ebc7823660d4aeb85ba5c60",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.149.0",
+            "version": "3.151.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0ab4ac60f94d53d55f2c7374deb75d9a58961970"
+                "reference": "5b9afeff4f6234dd6182c88cd6387296743e478a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0ab4ac60f94d53d55f2c7374deb75d9a58961970",
-                "reference": "0ab4ac60f94d53d55f2c7374deb75d9a58961970",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5b9afeff4f6234dd6182c88cd6387296743e478a",
+                "reference": "5b9afeff4f6234dd6182c88cd6387296743e478a",
                 "shasum": ""
             },
             "require": {
@@ -89,7 +89,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-08-13T18:10:50+00:00"
+            "time": "2020-08-27T18:13:21+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -423,17 +423,17 @@
         },
         {
             "name": "keboola/input-mapping",
-            "version": "9.3.0",
+            "version": "9.4.0",
             "target-dir": "Keboola/InputMapping",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/input-mapping.git",
-                "reference": "60594b568bba17c042f380ae5dc2e9ff1c10853b"
+                "reference": "1afefd80965a736f3092412f29329053e51cf0de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/input-mapping/zipball/60594b568bba17c042f380ae5dc2e9ff1c10853b",
-                "reference": "60594b568bba17c042f380ae5dc2e9ff1c10853b",
+                "url": "https://api.github.com/repos/keboola/input-mapping/zipball/1afefd80965a736f3092412f29329053e51cf0de",
+                "reference": "1afefd80965a736f3092412f29329053e51cf0de",
                 "shasum": ""
             },
             "require": {
@@ -467,7 +467,7 @@
                 }
             ],
             "description": "Shared component for processing SAPI input mapping and exporting to files",
-            "time": "2020-08-03T19:24:51+00:00"
+            "time": "2020-08-26T19:16:58+00:00"
         },
         {
             "name": "keboola/php-temp",
@@ -586,16 +586,16 @@
         },
         {
             "name": "keboola/storage-api-client",
-            "version": "10.17.1",
+            "version": "10.17.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/storage-api-php-client.git",
-                "reference": "4178d25d80b36f88fd0857b97cb704015191f542"
+                "reference": "a7a99fb166bc39d60901c704df1a2777d0db3a3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/storage-api-php-client/zipball/4178d25d80b36f88fd0857b97cb704015191f542",
-                "reference": "4178d25d80b36f88fd0857b97cb704015191f542",
+                "url": "https://api.github.com/repos/keboola/storage-api-php-client/zipball/a7a99fb166bc39d60901c704df1a2777d0db3a3d",
+                "reference": "a7a99fb166bc39d60901c704df1a2777d0db3a3d",
                 "shasum": ""
             },
             "require": {
@@ -633,20 +633,20 @@
             ],
             "description": "Keboola Storage API PHP CLient",
             "homepage": "http://keboola.com",
-            "time": "2020-08-12T10:56:00+00:00"
+            "time": "2020-08-19T07:07:23+00:00"
         },
         {
             "name": "keboola/syrup-php-client",
-            "version": "5.4.0",
+            "version": "5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/syrup-php-client.git",
-                "reference": "5aa7fe8d131d57fd4aa37484002a16e7b04ab588"
+                "reference": "fecdcab8c15a8b50598e7048f99940c4860f9e3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/syrup-php-client/zipball/5aa7fe8d131d57fd4aa37484002a16e7b04ab588",
-                "reference": "5aa7fe8d131d57fd4aa37484002a16e7b04ab588",
+                "url": "https://api.github.com/repos/keboola/syrup-php-client/zipball/fecdcab8c15a8b50598e7048f99940c4860f9e3b",
+                "reference": "fecdcab8c15a8b50598e7048f99940c4860f9e3b",
                 "shasum": ""
             },
             "require": {
@@ -674,7 +674,7 @@
                 }
             ],
             "description": "Keboola Syrup PHP Client",
-            "time": "2020-08-11T14:26:50+00:00"
+            "time": "2020-08-17T19:59:12+00:00"
         },
         {
             "name": "microsoft/azure-storage-blob",
@@ -2361,16 +2361,16 @@
         },
         {
             "name": "seld/jsonlint",
-            "version": "1.8.1",
+            "version": "1.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/jsonlint.git",
-                "reference": "3d5eb71705adfa34bd34b993400622932b2f62fd"
+                "reference": "590cfec960b77fd55e39b7d9246659e95dd6d337"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/3d5eb71705adfa34bd34b993400622932b2f62fd",
-                "reference": "3d5eb71705adfa34bd34b993400622932b2f62fd",
+                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/590cfec960b77fd55e39b7d9246659e95dd6d337",
+                "reference": "590cfec960b77fd55e39b7d9246659e95dd6d337",
                 "shasum": ""
             },
             "require": {
@@ -2416,7 +2416,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-08-13T09:07:59+00:00"
+            "time": "2020-08-25T06:56:57+00:00"
         },
         {
             "name": "symfony/config",
