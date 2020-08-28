@@ -263,21 +263,19 @@ class ConfigValidator
     private function validateWorkspace(): void
     {
         $workspaceId = getenv('WORKSPACE_ID') ? (string) getenv('WORKSPACE_ID') : null;
-        $workspaceType = getenv('WORKSPACE_TYPE') ? (string) getenv('WORKSPACE_TYPE') : null;
         $workspacePassword = getenv('WORKSPACE_PASSWORD') ? (string) getenv('WORKSPACE_PASSWORD') : null;
-        if ($workspaceId && (!$workspacePassword || !$workspaceType)) {
+        if ($workspaceId && !$workspacePassword) {
             throw new InvalidInputException(
                 'When using db storage staging, both WORKSPACE_ID and WORKSPACE_PASSWORD are required',
                 self::INTERNAL_ERROR
             );
         }
         $this->workspaceProvider = new NullWorkspaceProvider();
-        if ($workspaceId && $workspacePassword && $workspaceType) {
+        if ($workspaceId && $workspacePassword) {
             $this->workspaceProvider = new WorkspaceProvider(
                 $this->getClient(),
                 $workspaceId,
-                $workspacePassword,
-                $workspaceType
+                $workspacePassword
             );
         }
     }

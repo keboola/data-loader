@@ -12,7 +12,7 @@ use Keboola\StorageApi\Workspaces;
 
 class WorkspaceProvider implements WorkspaceProviderInterface
 {
-    const WORKSPACE_TYPE_STAGING_MAP = [
+    public const WORKSPACE_TYPE_STAGING_MAP = [
         self::TYPE_SNOWFLAKE => Reader::STAGING_SNOWFLAKE,
         self::TYPE_REDSHIFT => Reader::STAGING_REDSHIFT,
         self::TYPE_SYNAPSE => Reader::STAGING_SYNAPSE,
@@ -24,22 +24,17 @@ class WorkspaceProvider implements WorkspaceProviderInterface
     /** @var string $workspacePassword */
     private $workspacePassword;
 
-    /** @var string $workspaceType */
-    private $workspaceType;
-
     /** @var Client $storageApiClient */
     private $storageApiClient;
 
     public function __construct(
         Client $storageApiClient,
         string $workspaceId,
-        string $workspacePassword,
-        string $workspaceType
+        string $workspacePassword
     ) {
         $this->storageApiClient = $storageApiClient;
         $this->workspaceId = $workspaceId;
         $this->workspacePassword = $workspacePassword;
-        $this->workspaceType = $workspaceType;
     }
 
     private function getWorkspace(): array
@@ -50,10 +45,8 @@ class WorkspaceProvider implements WorkspaceProviderInterface
 
     public function getWorkspaceStagingName(): string
     {
-        if (!array_key_exists($this->workspaceType, self::WORKSPACE_TYPE_STAGING_MAP)) {
-            throw new InvalidInputException('Invalid workspace type provided: ' . $this->workspaceType);
-        }
-        return self::WORKSPACE_TYPE_STAGING_MAP[$this->workspaceType];
+        $workspace = $this->getWorkspace();
+        return self::WORKSPACE_TYPE_STAGING_MAP[$workspace['connection']['backend']];
     }
 
     /**
