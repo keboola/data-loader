@@ -15,7 +15,6 @@ The following environment variables are used for configuration (see .env.templat
 - `KBC_DATADIR` - Optional target directory, defaults to `/data/`
 - `KBC_RUNID` - Optional RunID, that appends to the log
 - `KBC_STORAGEAPI_URL` - Optional Storage API URL, if it's different from `https://connection.keboola.com`
-- `KBC_DOCKERAPI_URL` - Optional Docker API URL, if it's different from `https://syrup.keboola.com`
 - `KBC_COMPONENT_ID` - optional Id of the transformation component (only for V2 transformations).
 - `KBC_CONFIG_ID` - Id of the transformation configuration.
 - `KBC_CONFIG_VERSION` - Version of the `KBC_CONFIG_ID` transformation.
