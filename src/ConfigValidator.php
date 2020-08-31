@@ -150,9 +150,11 @@ class ConfigValidator
             ? json_decode((string) getenv('KBC_VARIABLE_VALUES_DATA'), true)
             : [];
         $options = ['token' => getenv('KBC_TOKEN')];
-        if (getenv('KBC_DOCKERAPI_URL')) {
-            $options['url'] = getenv('KBC_DOCKERAPI_URL');
-        }
+        $index = $this->client->indexAction();
+        $syrupService = array_filter($index['services'], function (array $service) {
+            return $service['id'] === 'syrup';
+        });
+        $options['url'] = $syrupService['url'];
         $options['runId'] = $this->client->getRunId();
         $syrupClient = new SyrupClient($options);
         try {
