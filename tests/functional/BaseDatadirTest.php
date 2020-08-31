@@ -28,14 +28,7 @@ abstract class BaseDatadirTest extends AbstractDatadirTestCase
         if (empty(getenv('KBC_TEST_TOKEN')) || empty(getenv('KBC_TEST_URL'))) {
             self::fail('KBC_TEST_TOKEN and KBC_TEST_URL environment variables must be set.');
         }
-        $this->client = new Client([
-            'token' => getenv('KBC_TEST_TOKEN'),
-            'url' => getenv('KBC_TEST_URL'),
-            'backoffMaxTries' => 1,
-            'jobPollRetryDelay' => function () {
-                return 1;
-            },
-        ]);
+        $this->initClient();
         try {
             $this->client->dropBucket('in.c-main', ['force' => true]);
         } catch (Exception $e) {
@@ -45,6 +38,18 @@ abstract class BaseDatadirTest extends AbstractDatadirTestCase
         }
         $this->client->createBucket('main', 'in');
         $this->client->createTable('in.c-main', 'source', new CsvFile(__DIR__ . '/files/source.csv'));
+    }
+
+    protected function initClient(): void
+    {
+        $this->client = new Client([
+            'token' => getenv('KBC_TEST_TOKEN'),
+            'url' => getenv('KBC_TEST_URL'),
+            'backoffMaxTries' => 1,
+            'jobPollRetryDelay' => function () {
+                return 1;
+            },
+        ]);
     }
 
     protected function runScript(string $datadirPath, array $envs = []): Process

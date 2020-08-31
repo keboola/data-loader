@@ -13,7 +13,7 @@ use Keboola\StorageApi\Options\Components\ListConfigurationWorkspacesOptions;
 use Keboola\StorageApi\Workspaces;
 use Symfony\Component\Finder\Finder;
 
-class WorkspaceTest extends BaseDatadirTest
+abstract class BaseWorkspaceTest extends BaseDatadirTest
 {
     public const TEST_COMPONENT_ID = 'keboola.sandboxes';
 
@@ -42,7 +42,7 @@ class WorkspaceTest extends BaseDatadirTest
         }
     }
 
-    private function createTestWorkspace(): array
+    private function createTestWorkspace(string $type): array
     {
         $components = new Components($this->client);
         $configuration = new Configuration();
@@ -53,7 +53,7 @@ class WorkspaceTest extends BaseDatadirTest
         $workspace = $components->createConfigurationWorkspace(
             self::TEST_COMPONENT_ID,
             $configuration->getConfigurationId(),
-            ['backend' => 'snowflake']
+            ['backend' => $type]
         );
         return $workspace;
     }
