@@ -150,11 +150,7 @@ class ConfigValidator
             ? json_decode((string) getenv('KBC_VARIABLE_VALUES_DATA'), true)
             : [];
         $options = ['token' => getenv('KBC_TOKEN')];
-        $index = $this->client->indexAction();
-        $syrupService = array_filter($index['services'], function (array $service) {
-            return $service['id'] === 'syrup';
-        });
-        $options['url'] = $syrupService['url'];
+        $options['url'] = StorageService::getServiceUrl($this->client, 'syrup');
         $options['runId'] = $this->client->getRunId();
         $syrupClient = new SyrupClient($options);
         try {
