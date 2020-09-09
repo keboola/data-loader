@@ -205,4 +205,55 @@ class TransformationV2ConfigTest extends TestCase
         );
         $processor->processConfiguration(new TransformationV2Config(), ['configuration' => $inData]);
     }
+
+    public function testIgnoreOutputMapping(): void
+    {
+        $inData = [
+            'parameters' => [
+                'type' => 'python',
+            ],
+            'storage' => [
+                'input' => [
+                    'tables' => [
+                        [
+                            'source' => 'in.c-main.test',
+                            'destination' => 'test',
+                        ],
+                    ],
+                ],
+                'output' => [
+                    'tables' => [
+                        [
+                            'source' =>  'test',
+                            'destination' => 'out.c-main.test',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $expected = [
+            'storage' => [
+                'input' => [
+                    'files' => [],
+                    'tables' => [
+                        [
+                            'source' => 'in.c-main.test',
+                            'destination' => 'test',
+                            'columns' => [],
+                            'column_types' => [],
+                            'where_values' => [],
+                            'where_operator' => 'eq',
+                        ],
+                    ],
+                ],
+            ],
+            'parameters' => [
+                'type' => 'python',
+                'blocks' => [],
+            ],
+        ];
+        $processor = new Processor();
+        $outData = $processor->processConfiguration(new TransformationV2Config(), ['configuration' => $inData]);
+        self::assertEquals($expected, $outData);
+    }
 }
