@@ -51,6 +51,7 @@ class TransformationV2Config implements ConfigurationInterface
             ->scalarNode('variableValuesId')->end()
             ->arrayNode('storage')
                 ->addDefaultsIfNotSet()
+                ->ignoreExtraKeys(true)
                 ->children()
                     ->arrayNode('input')
                         ->addDefaultsIfNotSet()
