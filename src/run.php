@@ -63,13 +63,15 @@ try {
     }
     if (!empty($validator->getInput()['tables'])) {
         try {
+            $stage = Reader::STAGING_LOCAL;
+            if ($workspaceProvider instanceof WorkspaceProvider) {
+                $stage = $workspaceProvider->getWorkspaceStagingName();
+            }
             $reader->downloadTables(
                 new InputTableOptionsList($validator->getInput()['tables']),
                 new InputTableStateList([]),
                 $validator->getDataDir() . '/in/tables/',
-                $validator->getWorkspaceId()
-                    ? $workspaceProvider->getWorkspaceStagingName()
-                    : Reader::STAGING_LOCAL
+                $stage
             );
         } catch (InvalidInputException $e) {
             throw new InvalidInputException($e->getMessage(), ConfigValidator::TABLES_ERROR, $e);
