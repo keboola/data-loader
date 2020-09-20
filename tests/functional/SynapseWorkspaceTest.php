@@ -24,6 +24,8 @@ class SynapseWorkspaceTest extends BaseDatadirTest
         if (!getenv('RUN_SYNAPSE_TESTS')) {
             return;
         }
+        putenv('KBC_TEST_URL=' . getenv('KBC_TEST_URL_SYNAPSE'));
+        putenv('KBC_TEST_TOKEN=' . getenv('KBC_TEST_TOKEN_SYNAPSE'));
         parent::setUp();
         $components = new Components($this->client);
         $workspaces = new Workspaces($this->client);
