@@ -49,3 +49,7 @@ Run tests:
 ```
 docker-compose run --rm dev composer ci
 ```
+
+## License
+
+MIT licensed, see [LICENSE](./LICENSE) file.
